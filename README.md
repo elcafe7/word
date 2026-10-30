@@ -1,14 +1,11 @@
-<!-- STAGED DRAFT for elcafe7/word (not published). Tag offline-20261029 and sizes filled from the 2026-10-29 16:22 ET build.
-     UNVERIFIED: the Koder steps 3-4 button names (Share -> Koder, Preview) until the iPhone test I3. -->
-
 <div align="center">
 
 # Word
 
 **Scripture one word at a time.**
-A red focus letter, at the speed you choose, in your browser, even with no internet.
+Each word with a red focus letter, at the speed you choose, in your browser, even with no internet.
 
-[**Read online**](https://apocalypse.press/word/) · [**Download offline**](#download-offline) · [Verse: whole verses](https://apocalypse.press/verse/)
+[**Read online**](https://apocalypse.press/word/) · [**Download for offline use**](#download-for-offline-use) · [Verse: read whole verses](https://apocalypse.press/verse/)
 
 <sub>A project of <a href="https://jesuspeoplesf.com">Jesus People SF</a> &amp; <a href="https://apocalypse.press">Apocalypse Press</a></sub>
 
@@ -18,7 +15,7 @@ A red focus letter, at the speed you choose, in your browser, even with no inter
 
 ---
 
-## Download offline
+## Download for offline use
 
 Each Bible is **one HTML file**. Download it once, then open it any time with no internet and nothing to install on a computer or Android phone.
 
@@ -33,10 +30,10 @@ All three files and [`SHA256SUMS`](https://github.com/elcafe7/word/releases/down
 ## Open it
 
 ### Mac
-Double-click the file. It opens in Safari (or your default browser), and Chrome, Edge and Firefox work too.
+Double-click the file. It opens in Safari (or your default browser). Chrome, Edge and Firefox work too.
 
 ### Windows
-Double-click the file. It opens in Edge (or your default browser), and Chrome and Firefox work too.
+Double-click the file. It opens in Edge (or your default browser). Chrome and Firefox work too.
 
 ### Android
 1. Download the file in Chrome.
@@ -46,18 +43,18 @@ Double-click the file. It opens in Edge (or your default browser), and Chrome an
 If it opens in "HTML Viewer", nothing will play. Open it again and pick Chrome.
 
 ### iPhone / iPad
-iPhone can't run web pages saved on the phone by itself (tapping the file only shows a still preview), so use the free **Koder** app:
+An iPhone or iPad can't run a web page saved on the device by itself (tapping the file only shows a still preview), so use the free **Koder** app:
 
 1. Install **[Koder Code Editor](https://apps.apple.com/us/app/koder-code-editor/id1447489375)** from the App Store (free).
-2. In Safari, open the download link for your Bible and tap **Download**, or **Share → Save to Files**.
-3. Open the **Files** app, long-press the file, tap **Share**, and choose **Koder** (or open Koder and import the file from Files).
+2. In Safari, tap the link for your Bible in the table above, then tap **Download**. It saves to **Files › Downloads**.
+3. Open the **Files** app, go to **Downloads**, long-press the file, tap **Share**, and choose **Koder** (or open Koder and import the file from Files).
 4. In Koder, tap the file, then tap **Preview** to run Word.
 
 Or skip the download and read online at **[apocalypse.press/word](https://apocalypse.press/word/)**.
 
 ## Controls
 
-| | Keyboard | Touch |
+| Action | Keyboard | Touch |
 |---|---|---|
 | Play / pause | <kbd>Space</kbd> | Tap the word |
 | Previous verse | <kbd>←</kbd> | Swipe right |
@@ -77,7 +74,7 @@ Each file remembers your book, chapter, verse, word, speed and theme in that bro
 
 ## Verify your download (optional)
 
-Download `SHA256SUMS` into the same folder as the file, then:
+Download `SHA256SUMS` into the same folder as the file, then run this in that folder:
 
 **Mac** (replace `word-kjv.html` with your file)
 ```sh
@@ -88,12 +85,13 @@ grep word-kjv.html SHA256SUMS | shasum -a 256 -c
 ```sh
 sha256sum -c --ignore-missing SHA256SUMS
 ```
+You should see `OK` on Mac or Linux.
 
 **Windows (PowerShell)** (replace `word-kjv.html` with your file)
 ```powershell
 Get-FileHash .\word-kjv.html -Algorithm SHA256
 ```
-Compare the hash with the line for that file in `SHA256SUMS`. You should see `OK` on Mac or Linux.
+Compare the hash with the line for that file in `SHA256SUMS` (capital letters don't matter).
 
 ## Build from source
 
@@ -104,7 +102,7 @@ npm ci
 npm run data             # public/data/ from data/bible_versions/{kjv,kj16,gen}.db (or set WORD_DB_DIR)
 npm test
 npm run build            # dist/, served under /word/
-npm run offline          # release/word-offline-<date>/: the three HTML files, SHA256SUMS, release notes
+npm run offline          # release/word-offline-<YYYYMMDD-HHMM>/: the three HTML files, SHA256SUMS, release notes
 ```
 
 The Bible databases in `data/bible_versions/` are the same files as in [Verse](https://github.com/elcafe7/verse).
@@ -114,7 +112,7 @@ The Bible databases in `data/bible_versions/` are the same files as in [Verse](h
 ```sh
 npx playwright install
 npm run e2e                                              # online app, local server
-WORD_OFFLINE_DIR=release/word-offline-<date> npm run e2e:offline   # the HTML files from file://, no network
+WORD_OFFLINE_DIR=release/word-offline-<YYYYMMDD-HHMM> npm run e2e:offline   # the HTML files from file://, no network
 ```
 
 ## License
@@ -124,8 +122,8 @@ The code is under the [MIT License](LICENSE). The Bible texts are public domain.
 ## Also from Apocalypse Press
 
 - **[Word online](https://apocalypse.press/word/)**: the same reader, always up to date.
-- **[Verse](https://apocalypse.press/verse/)**: read whole verses, with Hebrew and Greek source text. Its offline build: [Verse offline-20261023](https://github.com/elcafe7/verse/releases/tag/offline-20261023).
+- **[Verse](https://apocalypse.press/verse/)**: read whole verses, with Hebrew and Greek source text. Verse also has an offline build: [offline-20261023](https://github.com/elcafe7/verse/releases/tag/offline-20261023).
 
 ---
 
-<div align="center"><sub>Bible texts: Geneva Bible (1599), King James Version (1611 Original) and King James Version (Oxford 1769), all public domain.</sub></div>
+<div align="center"><sub>Bible texts: Geneva Bible (1599), King James Version (Oxford 1769) and King James Version (1611 Original), all public domain.</sub></div>
