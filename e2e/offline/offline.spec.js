@@ -14,6 +14,7 @@ const EDITIONS = [
 ];
 const url = (e, hash = '') => pathToFileURL(path.join(DIR, e.file)).href + hash;
 const tid = (page, id) => page.locator(`[data-testid="${id}"]`);
+const footerCredit = (page) => page.locator('footer .offline-note').last();
 const ready = (page) => expect(tid(page, 'word')).not.toHaveAttribute('data-count', '0');
 
 /** Aborts anything that isn't file:/data:/about:, and records every request plus console/page errors. */
@@ -63,6 +64,10 @@ for (const e of EDITIONS) {
       // A11: footer, title, build meta
       await expect(tid(page, 'footer-offline-edition')).toHaveText(new RegExp(`^Offline edition · ${e.name.replace(/[()]/g, '\\$&')} · built \\d{4}-\\d{2}-\\d{2} · no internet needed$`));
       await expect(tid(page, 'footer-offline')).toHaveCount(0);
+      await expect(footerCredit(page)).toHaveText('a project of JPSF & AP · Donate');
+      await expect(tid(page, 'footer-donate')).toHaveAttribute('href', 'https://jesuspeoplesf.com/donate/');
+      await expect(tid(page, 'footer-donate')).toHaveAttribute('target', '_blank');
+      await expect(tid(page, 'footer-donate')).toHaveAttribute('rel', 'noopener noreferrer');
       await expect(page).toHaveTitle(new RegExp(`^John 3:\\d+ · Word ${e.label}$`));
       await expect(page.locator('meta[name="word-build"]')).toHaveAttribute('content', /^\d{4}-\d{2}-\d{2} [0-9a-f]{7} [0-9a-f]{12}$/);
       expect(g.offsite()).toEqual([]);

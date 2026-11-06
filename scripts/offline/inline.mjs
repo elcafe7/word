@@ -15,6 +15,7 @@ export const LABELS = {
   kjv: { file: 'word-kjv.html', short: 'KJV' },
   kj16: { file: 'word-kjv1611.html', short: 'KJV 1611' },
 };
+export const DONATE_URL = 'https://jesuspeoplesf.com/donate/';
 const MIN = 3.5e6;
 const MAX = 5.0e6;
 
@@ -169,6 +170,9 @@ async function main() {
   html = html.replace(/\s*<p class="offline-note"><a [^>]*data-testid="footer-offline"[\s\S]*?<\/p>/, '');
   html = once(html, '<p class="offline-note">a project of',
     `<p class="offline-note" data-testid="footer-offline-edition">Offline edition · ${esc(edition.name)} · built ${isoDate} · no internet needed</p>\n      <p class="offline-note">a project of`, 'footer');
+  // Offline only: Donate link at the end of the credit line (the online footer has none)
+  html = once(html, 'data-testid="footer-ap">AP</a></p>',
+    `data-testid="footer-ap">AP</a> · <a href="${DONATE_URL}" target="_blank" rel="noopener noreferrer" data-testid="footer-donate">Donate</a></p>`, 'credit line');
 
   // App JS last, inline module (external modules are blocked on file://)
   html = once(html, '</body>', `  <script type="module">${js}</script>\n  </body>`, 'body end');
