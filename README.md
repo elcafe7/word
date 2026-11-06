@@ -7,6 +7,8 @@ Each word with a red focus letter, at the speed you choose, in your browser, eve
 
 [**Read online**](https://apocalypse.press/word/) · [**Download for offline use**](#download-for-offline-use) · [Verse: read whole verses](https://apocalypse.press/verse/)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 <sub>A project of <a href="https://jesuspeoplesf.com">Jesus People SF</a> &amp; <a href="https://apocalypse.press">Apocalypse Press</a></sub>
 
 <img src="readme-assets/word-phone.png" alt="Word on a phone showing John 3:16 in the Geneva Bible, with the word “For” and its red focus letter" width="300">
