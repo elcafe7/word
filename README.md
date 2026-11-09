@@ -8,6 +8,7 @@ Each word with a red focus letter, at the speed you choose, in your browser, eve
 [**Read online**](https://apocalypse.press/word/) · [**Download for offline use**](#download-for-offline-use) · [Verse: read whole verses](https://apocalypse.press/verse/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/elcafe7/word/badge)](https://scorecard.dev/viewer/?uri=github.com/elcafe7/word)
 
 <sub>A project of <a href="https://jesuspeoplesf.com">Jesus People SF</a> &amp; <a href="https://apocalypse.press">Apocalypse Press</a></sub>
 
@@ -94,6 +95,14 @@ You should see `OK` on Mac or Linux.
 Get-FileHash .\word-kjv.html -Algorithm SHA256
 ```
 Compare the hash with the line for that file in `SHA256SUMS` (capital letters don't matter).
+
+**Check where a file came from** (releases built by GitHub Actions, newer than offline-20261029). With the [GitHub CLI](https://cli.github.com/):
+```sh
+gh attestation verify word-kjv.html -R elcafe7/word
+```
+This confirms the file was built from this repository by [`release.yml`](.github/workflows/release.yml).
+
+Each such release also has a CycloneDX SBOM (`word-offline-<YYYYMMDD>.cdx.json`), a dated OSV-Scanner report (`…-osv-scan.md` / `.json`) and `verification.json` (scan summary for download pages). A release is only published when every check passes: OSV-Scanner finds no known vulnerabilities (CVSS 7.0 or higher fails the release, and lower-rated findings hold it too; advisories with no CVSS score are listed as warnings), the checksums verify, and VirusTotal (when turned on) flags nothing. If a check fails, nothing is published, and the findings with a suggested fix go to a "Release blocked" issue instead. Details: [docs/RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md).
 
 ## Build from source
 

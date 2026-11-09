@@ -14,3 +14,5 @@ staging/
 release/
 .env*
 review-shots/
+notes/
+scan-report/
