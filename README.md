@@ -3,7 +3,7 @@
 # Word
 
 **Scripture one word at a time.**
-Word is a Bible speed reading app. It shows Scripture one word at a time, each with a red focus letter, at the speed you choose, in your browser, even with no internet.
+A Bible speed reading app: each word with a red focus letter, at the speed you choose, in your browser, even with no internet.
 
 ### ⬇ Download for offline use
 
