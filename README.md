@@ -9,6 +9,12 @@ Each word with a red focus letter, at the speed you choose, in your browser, eve
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/elcafe7/word/badge)](https://scorecard.dev/viewer/?uri=github.com/elcafe7/word)
+<!-- OpenSSF Best Practices badge slot: set PROJECT_ID and uncomment (security/MANUAL-STEPS.md)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/PROJECT_ID/badge)](https://www.bestpractices.dev/projects/PROJECT_ID)
+-->
+<!-- Socket.dev badge slot: set SOCKET_URL and uncomment (security/MANUAL-STEPS.md)
+[![Socket](https://img.shields.io/badge/Socket.dev-monitored-blue)](SOCKET_URL)
+-->
 
 <sub>A project of <a href="https://jesuspeoplesf.com">Jesus People SF</a> &amp; <a href="https://apocalypse.press">Apocalypse Press</a></sub>
 
@@ -103,6 +109,20 @@ gh attestation verify word-kjv.html -R elcafe7/word
 This confirms the file was built from this repository by [`release.yml`](.github/workflows/release.yml).
 
 Each such release also has a CycloneDX SBOM (`word-offline-<YYYYMMDD>.cdx.json`), a dated OSV-Scanner report (`…-osv-scan.md` / `.json`) and `verification.json` (scan summary for download pages). A release is only published when every check passes: OSV-Scanner finds no known vulnerabilities (CVSS 7.0 or higher fails the release, and lower-rated findings hold it too; advisories with no CVSS score are listed as warnings), the checksums verify, and VirusTotal (when turned on) flags nothing. If a check fails, nothing is published, and the findings with a suggested fix go to a "Release blocked" issue instead. Details: [docs/RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md).
+
+## Security reports
+
+Every clean release also opens a PR that adds a dated report folder,
+`security/reports/<tag>_<UTC timestamp>/`, with a `summary.md` (each check,
+its result, date and time in UTC) and one file per check: OSV-Scanner report,
+SBOM, SHA256SUMS, attestation link, VirusTotal links (when turned on) and the
+OpenSSF Scorecard JSON. Index of all runs, newest first:
+[security/README.md](security/README.md) (machine-readable:
+[security/latest.json](security/latest.json)).
+
+<!-- security-reports:start -->
+Latest: none yet. The first verified release adds its report here. All runs: [security/README.md](security/README.md).
+<!-- security-reports:end -->
 
 ## Build from source
 
