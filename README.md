@@ -3,9 +3,15 @@
 # Word
 
 **Scripture one word at a time.**
-Each word with a red focus letter, at the speed you choose, in your browser, even with no internet.
+A Bible speed reading app: each word with a red focus letter, at the speed you choose, in your browser, even with no internet.
 
-[**Read online**](https://apocalypse.press/word/) · [**Download for offline use**](#download-for-offline-use) · [Verse: read whole verses](https://apocalypse.press/verse/)
+### ⬇ Download for offline use
+
+### [Geneva 1599](https://github.com/elcafe7/word/releases/latest/download/word-geneva1599.html) · [KJV](https://github.com/elcafe7/word/releases/latest/download/word-kjv.html) · [KJV 1611](https://github.com/elcafe7/word/releases/latest/download/word-kjv1611.html)
+
+<sub>one HTML file per Bible · about 4.3 MB each · free · <a href="https://github.com/elcafe7/word/releases/latest">release page</a></sub>
+
+[**Read online**](https://apocalypse.press/word/) · [Verse](https://apocalypse.press/verse/) · [Scroll](https://apocalypse.press/scroll/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/elcafe7/word/badge)](https://scorecard.dev/viewer/?uri=github.com/elcafe7/word)
@@ -16,7 +22,7 @@ Each word with a red focus letter, at the speed you choose, in your browser, eve
 [![Socket](https://img.shields.io/badge/Socket.dev-monitored-blue)](SOCKET_URL)
 -->
 
-<sub>A project of <a href="https://jesuspeoplesf.com">Jesus People SF</a> &amp; <a href="https://apocalypse.press">Apocalypse Press</a></sub>
+<sub>A project of <a href="https://jesuspeoplesf.com">Jesus People SF</a> &amp; <a href="https://apocalypse.press">Apocalypse Press</a> · <a href="https://jesuspeoplesf.com/donate/">Donate</a></sub>
 
 <img src="readme-assets/word-phone.png" alt="Word on a phone showing John 3:16 in the Geneva Bible, with the word “For” and its red focus letter" width="300">
 
@@ -24,19 +30,35 @@ Each word with a red focus letter, at the speed you choose, in your browser, eve
 
 ---
 
+## What it is
+
+Word flashes the Bible one word at a time in the middle of your screen, so your eyes stay still and you can read steadily without losing your place. Press play, set a pace that feels comfortable, and read.
+
+- **Three Bibles:** Geneva Bible (1599), King James Version (Oxford 1769), and King James Version (1611 original).
+- **Your pace:** from 100 to 900 words per minute, in small steps.
+- **Easy to steer:** go back a verse, jump to any passage, or press and hold to pick a word.
+- **Minimalist mode** and **light or dark**.
+
+## Read online
+
+Open **[apocalypse.press/word](https://apocalypse.press/word/)** in any browser, on a computer or a phone. Nothing to install, always up to date.
+
 ## Download for offline use
 
-Each Bible is **one HTML file**. Download it once, then open it any time with no internet and nothing to install on a computer or Android phone.
+Each Bible is **one HTML file**. Download it once, then open it any time with no internet and nothing to install.
 
-| Bible | File | Size |
-|---|---|---|
-| **Geneva Bible (1599)** | [`word-geneva1599.html`](https://github.com/elcafe7/word/releases/download/offline-20261029/word-geneva1599.html) | ~4.3 MB |
-| **King James Version (Oxford 1769)** | [`word-kjv.html`](https://github.com/elcafe7/word/releases/download/offline-20261029/word-kjv.html) | ~4.3 MB |
-| **King James Version (1611 Original)** | [`word-kjv1611.html`](https://github.com/elcafe7/word/releases/download/offline-20261029/word-kjv1611.html) | ~4.4 MB |
+1. **Download** the Bible you want:
+   - [**Geneva Bible (1599)**: `word-geneva1599.html`](https://github.com/elcafe7/word/releases/latest/download/word-geneva1599.html) (about 4.3 MB)
+   - [**King James Version (Oxford 1769)**: `word-kjv.html`](https://github.com/elcafe7/word/releases/latest/download/word-kjv.html) (about 4.3 MB)
+   - [**King James Version (1611 Original)**: `word-kjv1611.html`](https://github.com/elcafe7/word/releases/latest/download/word-kjv1611.html) (about 4.4 MB)
+2. **Double-click the file.** It opens in Chrome, Edge, Safari, or Firefox. There's nothing to unzip.
+3. **Press play.** It works with no internet connection.
 
-All three files and [`SHA256SUMS`](https://github.com/elcafe7/word/releases/download/offline-20261029/SHA256SUMS) are on the [**offline-20261029 release page**](https://github.com/elcafe7/word/releases/tag/offline-20261029). Each file has the 66 books of the Old and New Testaments (no Apocrypha).
+Each file has the 66 books of the Old and New Testaments (no Apocrypha). All three files and their checksums are also on the [release page](https://github.com/elcafe7/word/releases/latest).
 
-## Open it
+**On a phone?** The easiest way is to read online at [apocalypse.press/word](https://apocalypse.press/word/), and you can add it to your home screen from your browser's Share or menu button. To use the downloaded file on a phone, see **Android** and **iPhone / iPad** below.
+
+## Opening the file
 
 ### Mac
 Double-click the file. It opens in Safari (or your default browser). Chrome, Edge and Firefox work too.
@@ -55,7 +77,7 @@ If it opens in "HTML Viewer", nothing will play. Open it again and pick Chrome.
 An iPhone or iPad can't run a web page saved on the device by itself (tapping the file only shows a still preview), so use the free **Koder** app:
 
 1. Install **[Koder Code Editor](https://apps.apple.com/us/app/koder-code-editor/id1447489375)** from the App Store (free).
-2. In Safari, tap the link for your Bible in the table above, then tap **Download**. It saves to **Files › Downloads**.
+2. In Safari, tap the link for your Bible in the list above, then tap **Download**. It saves to **Files › Downloads**.
 3. Open the **Files** app, go to **Downloads**, long-press the file, tap **Share**, and choose **Koder** (or open Koder and import the file from Files).
 4. In Koder, tap the file, then tap **Preview** to run Word.
 
@@ -81,7 +103,7 @@ Or skip the download and read online at **[apocalypse.press/word](https://apocal
 
 Each file remembers your book, chapter, verse, word, speed and theme in that browser, so it opens where you left off. The address bar also shows your verse, so a bookmark brings you back there.
 
-## Verify your download (optional)
+## Check your download (optional)
 
 Download `SHA256SUMS` into the same folder as the file, then run this in that folder:
 
@@ -102,29 +124,23 @@ Get-FileHash .\word-kjv.html -Algorithm SHA256
 ```
 Compare the hash with the line for that file in `SHA256SUMS` (capital letters don't matter).
 
-**Check where a file came from** (releases built by GitHub Actions, newer than offline-20261029). With the [GitHub CLI](https://cli.github.com/):
-```sh
-gh attestation verify word-kjv.html -R elcafe7/word
-```
-This confirms the file was built from this repository by [`release.yml`](.github/workflows/release.yml).
+## More from us
 
-Each such release also has a CycloneDX SBOM (`word-offline-<YYYYMMDD>.cdx.json`), a dated OSV-Scanner report (`…-osv-scan.md` / `.json`) and `verification.json` (scan summary for download pages). A release is only published when every check passes: OSV-Scanner finds no known vulnerabilities (CVSS 7.0 or higher fails the release, and lower-rated findings hold it too; advisories with no CVSS score are listed as warnings), the checksums verify, and VirusTotal (when turned on) flags nothing. If a check fails, nothing is published, and the findings with a suggested fix go to a "Release blocked" issue instead. Details: [docs/RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md).
+- [Verse](https://apocalypse.press/verse/): read whole verses, with Hebrew and Greek source text. Also [downloadable for offline use](https://github.com/elcafe7/verse).
+- [Scroll](https://apocalypse.press/scroll/): the Bible rolling gently up your screen. Also [downloadable](https://github.com/elcafe7/bible_scroller).
+- [Apocalypse Press](https://apocalypse.press) · [Jesus People SF](https://jesuspeoplesf.com) · [Donate](https://jesuspeoplesf.com/donate/)
 
-## Security reports
+## License
 
-Every clean release also opens a PR that adds a dated report folder,
-`security/reports/<tag>_<UTC timestamp>/`, with a `summary.md` (each check,
-its result, date and time in UTC) and one file per check: OSV-Scanner report,
-SBOM, SHA256SUMS, attestation link, VirusTotal links (when turned on) and the
-OpenSSF Scorecard JSON. Index of all runs, newest first:
-[security/README.md](security/README.md) (machine-readable:
-[security/latest.json](security/latest.json)).
+The code is under the [MIT License](LICENSE). The Bible texts are public domain.
 
-<!-- security-reports:start -->
-Latest: none yet. The first verified release adds its report here. All runs: [security/README.md](security/README.md).
-<!-- security-reports:end -->
+---
 
-## Build from source
+## For developers
+
+You only need this to change the app. To read, use the download above.
+
+### Build from source
 
 Needs Node 22 and Python 3.
 
@@ -138,7 +154,7 @@ npm run offline          # release/word-offline-<YYYYMMDD-HHMM>/: the three HTML
 
 The Bible databases in `data/bible_versions/` are the same files as in [Verse](https://github.com/elcafe7/verse).
 
-### Tests
+#### Tests
 
 ```sh
 npx playwright install
@@ -146,14 +162,29 @@ npm run e2e                                              # online app, local ser
 WORD_OFFLINE_DIR=release/word-offline-<YYYYMMDD-HHMM> npm run e2e:offline   # the HTML files from file://, no network
 ```
 
-## License
+### Release verification
 
-The code is under the [MIT License](LICENSE). The Bible texts are public domain.
+**Check where a file came from** (releases built by GitHub Actions, newer than offline-20261029). With the [GitHub CLI](https://cli.github.com/):
+```sh
+gh attestation verify word-kjv.html -R elcafe7/word
+```
+This confirms the file was built from this repository by [`release.yml`](.github/workflows/release.yml).
 
-## Also from Apocalypse Press
+Each such release also has a CycloneDX SBOM (`word-offline-<YYYYMMDD>.cdx.json`), a dated OSV-Scanner report (`…-osv-scan.md` / `.json`) and `verification.json` (scan summary for download pages). A release is only published when every check passes: OSV-Scanner finds no known vulnerabilities (CVSS 7.0 or higher fails the release, and lower-rated findings hold it too; advisories with no CVSS score are listed as warnings), the checksums verify, and VirusTotal (when turned on) flags nothing. If a check fails, nothing is published, and the findings with a suggested fix go to a "Release blocked" issue instead. Details: [docs/RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md).
 
-- **[Word online](https://apocalypse.press/word/)**: the same reader, always up to date.
-- **[Verse](https://apocalypse.press/verse/)**: read whole verses, with Hebrew and Greek source text. Verse also has an offline build: [offline-20261023](https://github.com/elcafe7/verse/releases/tag/offline-20261023).
+### Security reports
+
+Every clean release also opens a PR that adds a dated report folder,
+`security/reports/<tag>_<UTC timestamp>/`, with a `summary.md` (each check,
+its result, date and time in UTC) and one file per check: OSV-Scanner report,
+SBOM, SHA256SUMS, attestation link, VirusTotal links (when turned on) and the
+OpenSSF Scorecard JSON. Index of all runs, newest first:
+[security/README.md](security/README.md) (machine-readable:
+[security/latest.json](security/latest.json)).
+
+<!-- security-reports:start -->
+Latest: none yet. The first verified release adds its report here. All runs: [security/README.md](security/README.md).
+<!-- security-reports:end -->
 
 ---
 
