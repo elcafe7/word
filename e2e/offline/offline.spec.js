@@ -12,6 +12,8 @@ const EDITIONS = [
   { id: 'kjv', file: 'word-kjv.html', short: 'KJV', header: 'KJV (Oxford 1769)', name: 'King James Version (Oxford 1769)', label: 'KJV' },
   { id: 'kj16', file: 'word-kjv1611.html', short: 'KJV 1611', header: 'KJV (1611 Original)', name: 'King James Version (1611 Original)', label: 'KJV 1611' },
 ];
+/** Escapes every RegExp metacharacter (including backslash) so a literal string matches only itself. */
+const escapeRegExp = (s) => s.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&');
 const url = (e, hash = '') => pathToFileURL(path.join(DIR, e.file)).href + hash;
 const tid = (page, id) => page.locator(`[data-testid="${id}"]`);
 const footerCredit = (page) => page.locator('footer .offline-note').last();
@@ -62,13 +64,13 @@ for (const e of EDITIONS) {
       await tid(page, 'btn-play').click();
       await expect(tid(page, 'btn-play')).toHaveAttribute('data-state', 'paused');
       // A11: footer, title, build meta
-      await expect(tid(page, 'footer-offline-edition')).toHaveText(new RegExp(`^Offline edition · ${e.name.replace(/[()]/g, '\\$&')} · built \\d{4}-\\d{2}-\\d{2} · no internet needed$`));
+      await expect(tid(page, 'footer-offline-edition')).toHaveText(new RegExp(`^Offline edition · ${escapeRegExp(e.name)} · built \\d{4}-\\d{2}-\\d{2} · no internet needed$`));
       await expect(tid(page, 'footer-offline')).toHaveCount(0);
       await expect(footerCredit(page)).toHaveText('a project of JPSF & AP · Donate');
       await expect(tid(page, 'footer-donate')).toHaveAttribute('href', 'https://jesuspeoplesf.com/donate/');
       await expect(tid(page, 'footer-donate')).toHaveAttribute('target', '_blank');
       await expect(tid(page, 'footer-donate')).toHaveAttribute('rel', 'noopener noreferrer');
-      await expect(page).toHaveTitle(new RegExp(`^John 3:\\d+ · Word ${e.label}$`));
+      await expect(page).toHaveTitle(new RegExp(`^John 3:\\d+ · Word ${escapeRegExp(e.label)}$`));
       await expect(page.locator('meta[name="word-build"]')).toHaveAttribute('content', /^\d{4}-\d{2}-\d{2} [0-9a-f]{7} [0-9a-f]{12}$/);
       expect(g.offsite()).toEqual([]);
       // Only this file itself (Firefox doesn't report the file:// navigation as a request at all).

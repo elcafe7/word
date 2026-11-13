@@ -130,6 +130,12 @@ Compare the hash with the line for that file in `SHA256SUMS` (capital letters do
 - [Scroll](https://apocalypse.press/scroll/): the Bible rolling gently up your screen. Also [downloadable](https://github.com/elcafe7/bible_scroller).
 - [Apocalypse Press](https://apocalypse.press) · [Jesus People SF](https://jesuspeoplesf.com) · [Donate](https://jesuspeoplesf.com/donate/)
 
+## Issues and contributing
+
+- **Questions, bugs and ideas:** open an issue in the [issue tracker](https://github.com/elcafe7/word/issues). Add the `question` label for questions.
+- **Code and docs:** pull requests against `main` are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) has the steps, the checks to run, and what's needed for a change to be accepted.
+- **Security problems:** please don't open a public issue. See [SECURITY.md](SECURITY.md) to report privately.
+
 ## License
 
 The code is under the [MIT License](LICENSE). The Bible texts are public domain.
