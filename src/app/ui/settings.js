@@ -1,4 +1,5 @@
 // Settings panel (SPEC §10.7). Every change saves immediately and applies live via onChange.
+import { applyFontPct, clampPct, wirePct } from '../tune.js';
 import { $, byId } from './dom.js';
 
 const fmtMult = (v) => `×${Number(v).toFixed(1)}`;
@@ -35,6 +36,13 @@ export function createSettings(h) {
     if (t instanceof Element && t.closest('[data-testid="welcome"]')) return;
     close();
   });
+
+  const fontPct = /** @type {HTMLInputElement} */ ($('setting-font-pct'));
+  let lastFontPct = 100;
+  wirePct(fontPct, (v, writeField = true) => {
+    h.onChange({ fontPct: clampPct(v) });
+    if (writeField) fontPct.value = String(clampPct(v));
+  }, () => lastFontPct);
 
   wpm.addEventListener('input', () => {
     const v = Number(wpm.value);
@@ -74,6 +82,10 @@ export function createSettings(h) {
         /** @type {HTMLInputElement} */ (input).value = String(s[key]);
         out.textContent = fmtMult(s[key]);
       }
+      lastFontPct = s.fontPct;
+      applyFontPct(s.fontPct);
+      byId('out-font-pct').textContent = `${s.fontPct}%`;
+      if (document.activeElement !== fontPct) fontPct.value = String(s.fontPct);
       for (const n of [1, 2, 3]) $(`setting-frame-${n}`).setAttribute('aria-pressed', String(s.frameSize === n));
       /** @type {HTMLInputElement} */ ($('setting-red-letter')).checked = s.redLetter;
       /** @type {HTMLInputElement} */ ($(`setting-status-${s.status}`)).checked = true;

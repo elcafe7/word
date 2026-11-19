@@ -22,6 +22,16 @@ describe('settings', () => {
     localStorage.setItem('word-settings', JSON.stringify({ wpm: 310 }));
     expect(loadSettings().wpm).toBe(300);
   });
+  it('keeps a fontPct in 50–300 and defaults the rest', () => {
+    localStorage.setItem('word-settings', JSON.stringify({ fontPct: 150 }));
+    expect(loadSettings().fontPct).toBe(150);
+  });
+  it('rejects a fontPct outside 50–300 or a non-integer', () => {
+    for (const bad of [49, 301, 100.5, '120', null]) {
+      localStorage.setItem('word-settings', JSON.stringify({ fontPct: bad }));
+      expect(loadSettings().fontPct).toBe(100);
+    }
+  });
   it('saveSettings merges and persists', () => {
     expect(saveSettings({ wpm: 600 }).wpm).toBe(600);
     expect(JSON.parse(localStorage.getItem('word-settings'))).toEqual({ ...DEFAULT_SETTINGS, wpm: 600 });

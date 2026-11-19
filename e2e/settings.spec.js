@@ -123,3 +123,69 @@ test('settings button: wrench icon styled like the theme icon, name "Settings", 
   expect(box.width).toBeGreaterThanOrEqual(42);
   expect(box.height).toBeGreaterThanOrEqual(42);
 });
+
+test('text size percent saves, scales the word, and clamps on blur', async ({ page }) => {
+  const word = tid(page, 'word');
+  const field = tid(page, 'setting-font-pct');
+  await expect(field).toHaveValue('100');
+  await expect(page.locator('#out-font-pct')).toHaveText('100%');
+  const base = await word.evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
+
+  await field.fill('150');
+  await expect(page.locator('#out-font-pct')).toHaveText('150%');
+  expect((await stored(page)).fontPct).toBe(150);
+  await expect.poll(async () => word.evaluate((e) => parseFloat(getComputedStyle(e).fontSize))).toBeCloseTo(base * 1.5, 0);
+
+  await field.fill('10');
+  await field.blur();
+  await expect(field).toHaveValue('50');
+  await expect(page.locator('#out-font-pct')).toHaveText('50%');
+  expect((await stored(page)).fontPct).toBe(50);
+
+  await field.fill('999');
+  await field.press('Enter');
+  await expect(field).toHaveValue('300');
+  expect((await stored(page)).fontPct).toBe(300);
+
+  await page.reload();
+  await appReady(page);
+  await tid(page, 'btn-settings').click();
+  await expect(tid(page, 'setting-font-pct')).toHaveValue('300');
+  await expect(page.locator('#out-font-pct')).toHaveText('300%');
+});
+
+test('a long word at 300% still fits the card', async ({ page }) => {
+  // Isaiah 8:1 ends with Mahershalalhashbaz; resume on that word at the max size.
+  // Seed via addInitScript so pagehide from this tab cannot overwrite the position on the way out.
+  const tokens = await page.evaluate(async (u) => {
+    const j = await (await fetch(u)).json();
+    return j.verses[0].text.split(/\s+/).filter(Boolean);
+  }, at('/word/data/kjv/Isa/8.json'));
+  const i = tokens.findIndex((w) => /Mahershalalhashbaz/i.test(w));
+  expect(i).toBeGreaterThanOrEqual(0);
+  await page.addInitScript(({ word }) => {
+    const cur = JSON.parse(localStorage.getItem('word-settings') || '{}');
+    localStorage.setItem('word-settings', JSON.stringify(Object.assign(cur, { fontPct: 300 })));
+    localStorage.setItem('word-position', JSON.stringify({ v: 1, edition: 'kjv', abbr: 'Isa', chapter: 8, verse: 1, word, updatedAt: Date.now() }));
+  }, { word: i });
+  await page.goto(at('/word/kjv/Isaiah-8-1'));
+  await appReady(page);
+  await expect(tid(page, 'word')).toContainText(/Mahershalalhashbaz/i);
+  const fit = await page.evaluate(() => {
+    const word = document.querySelector('[data-testid="word"]');
+    const card = document.querySelector('[data-testid="card"]');
+    const cr = card.getBoundingClientRect();
+    const boxes = [word, ...word.querySelectorAll('span')].map((el) => el.getBoundingClientRect());
+    return {
+      overflowRight: Math.max(...boxes.map((b) => b.right)) - cr.right,
+      overflowLeft: cr.left - Math.min(...boxes.map((b) => b.left)),
+      pageOverflow: document.documentElement.scrollWidth - window.innerWidth,
+      fontSize: parseFloat(getComputedStyle(word).fontSize),
+      cardWidth: cr.width,
+    };
+  });
+  expect(fit.cardWidth).toBeGreaterThan(0);
+  expect(fit.overflowRight).toBeLessThanOrEqual(1);
+  expect(fit.overflowLeft).toBeLessThanOrEqual(1);
+  expect(fit.pageOverflow).toBeLessThanOrEqual(1);
+});

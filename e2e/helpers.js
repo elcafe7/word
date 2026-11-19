@@ -28,7 +28,7 @@ export async function seed(page, values) {
   }, values);
 }
 
-export const settings = (patch) => ({ v: 1, wpm: 300, frameSize: 1, redLetter: true, commaMult: 1.5, sentenceMult: 2.0, verseMult: 2.5, status: 'semi', ...patch });
+export const settings = (patch) => ({ v: 1, wpm: 300, frameSize: 1, fontPct: 100, redLetter: true, commaMult: 1.5, sentenceMult: 2.0, verseMult: 2.5, status: 'semi', ...patch });
 
 export async function openPassage(page, path, status) {
   await page.goto(path);

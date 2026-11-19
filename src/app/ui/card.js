@@ -2,30 +2,45 @@
 import { splitFrame } from '../../engine/frames.js';
 import { $, clear, el } from './dom.js';
 
+/** Shrink the RSVP word so a long frame still fits the card at large text sizes. */
+export function fitWord(word, redLetter) {
+  word.style.fontSize = '';
+  const inner = word.clientWidth;
+  if (!inner) return;
+  let needed;
+  if (redLetter) {
+    const [b, o, a] = word.children;
+    needed = 2 * Math.max(b.scrollWidth, a.scrollWidth) + o.scrollWidth;
+  } else {
+    needed = word.firstElementChild ? word.firstElementChild.scrollWidth : 0;
+  }
+  if (needed > inner) {
+    const baseSize = parseFloat(getComputedStyle(word).fontSize) || 32;
+    word.style.fontSize = `${Math.floor(((baseSize * inner) / needed) * 10) / 10}px`;
+  }
+}
+
 export function createCard() {
   const card = $('card');
   const word = $('word');
   const stage = $('stage');
   const loading = $('loading');
-  let baseSize = 0;
+  let lastRed = true;
+  let lastWidth = 0;
 
   function fit(redLetter) {
-    word.style.fontSize = '';
-    const inner = word.clientWidth;
-    if (!inner) return;
-    let needed;
-    if (redLetter) {
-      const [b, o, a] = word.children;
-      needed = 2 * Math.max(b.scrollWidth, a.scrollWidth) + o.scrollWidth;
-    } else {
-      needed = word.firstElementChild ? word.firstElementChild.scrollWidth : 0;
-    }
-    if (needed > inner) {
-      baseSize = parseFloat(getComputedStyle(word).fontSize) || 32;
-      word.style.fontSize = `${Math.floor(((baseSize * inner) / needed) * 10) / 10}px`;
-    }
+    lastRed = redLetter;
+    fitWord(word, redLetter);
   }
 
+  if (typeof ResizeObserver === 'function') {
+    new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect?.width ?? 0;
+      if (w === lastWidth) return;
+      lastWidth = w;
+      if (word.childElementCount) fit(lastRed);
+    }).observe(stage);
+  }
   return {
     /** @param {{index: number, words: string[]}} state @param {{redLetter: boolean}} settings */
     render(state, settings) {
