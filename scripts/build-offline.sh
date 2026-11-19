@@ -46,9 +46,9 @@ PREV="${WORD_OFFLINE_PREV_TAG:-}"
 {
   echo "Word offline: scripture one word at a time, no internet needed. One self-contained HTML file per Bible; download the one you want."
   echo
-  echo "- word-geneva1599.html: Geneva Bible (1599), 66 books, $(mb "${BYTES[gen]}") MB"
-  echo "- word-kjv.html: King James Version (Oxford 1769), 66 books, $(mb "${BYTES[kjv]}") MB"
-  echo "- word-kjv1611.html: King James Version (1611 Original), 66 books, $(mb "${BYTES[kj16]}") MB"
+  echo "- word-geneva1599.html: Geneva Bible (1599), 66 books plus the Apocrypha (7 books), $(mb "${BYTES[gen]}") MB"
+  echo "- word-kjv.html: King James Version (Oxford 1769), 66 books (no Apocrypha), $(mb "${BYTES[kjv]}") MB"
+  echo "- word-kjv1611.html: King James Version (1611 Original), 66 books plus the Apocrypha (14 books), $(mb "${BYTES[kj16]}") MB"
   echo "- SHA256SUMS: checksums for the three files"
   echo
   echo "How to open:"

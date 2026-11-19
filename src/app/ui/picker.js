@@ -95,10 +95,13 @@ export function createPicker(index, h) {
     const r = parseQuery(index, q, st.current);
     if (r.kind === 'empty') {
       filter.setAttribute('aria-expanded', 'false');
-      for (const [t, label] of [['OT', 'Old Testament'], ['NT', 'New Testament']]) {
-        booksBox.append(el('h2', { class: 'picker-heading' }, label));
-        const grid = el('div', { class: 'picker-grid books' });
-        index.books.filter((b) => b.testament === t).forEach((b) => grid.append(bookButton(b)));
+      // Apocrypha sits between the Testaments when this edition lists it (Geneva 1599, KJV 1611).
+      for (const [t, label] of [['OT', 'Old Testament'], ['AP', 'Apocrypha'], ['NT', 'New Testament']]) {
+        const inSection = index.books.filter((b) => b.testament === t);
+        if (!inSection.length) continue;
+        booksBox.append(el('h2', { class: 'picker-heading', 'data-testid': `picker-heading-${t.toLowerCase()}` }, label));
+        const grid = el('div', { class: 'picker-grid books', 'data-testid': `picker-grid-${t.toLowerCase()}` });
+        inSection.forEach((b) => grid.append(bookButton(b)));
         booksBox.append(grid);
       }
       return;

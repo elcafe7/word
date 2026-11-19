@@ -110,6 +110,39 @@ BOOKS = [
 NAME_BY_ABBR = {b[2]: b[1] for b in BOOKS}
 NAMES = {b[1] for b in BOOKS}
 
+# Apocrypha: only the Geneva 1599 and KJV 1611 databases carry it; the KJV (Oxford 1769) is the Protestant 66 only.
+# (name, abbr, aliases, db_key) where db_key is the book token stored in each database's references.
+# Names, abbreviations and aliases follow Verse (verse.py BOOK_ALIASES, core/db.py, offline/build_offline.py).
+# Each edition lists its own books in database order and numbers them 67.. with no gaps (n is per edition).
+APOCRYPHA = {
+    "gen": [
+        ("Tobit", "Tob", ("tob", "tobit"), "Tob"),
+        ("Judith", "Jdt", ("jdt", "judith"), "Jdt"),
+        ("Wisdom of Solomon", "Wis", ("wis", "wisdom", "wisdomofsolomon"), "Wis"),
+        ("Ecclesiasticus", "Sir", ("sir", "sirach", "ecclesiasticus"), "Sir"),
+        ("Baruch", "Bar", ("bar", "baruch"), "Bar"),
+        ("1 Maccabees", "1Macc", ("1macc", "1maccabees"), "1Macc"),
+        ("2 Maccabees", "2Macc", ("2macc", "2maccabees"), "2Macc"),
+    ],
+    "kj16": [
+        ("1 Esdras", "1Esd", ("1esd", "1esdras"), "1 Esdras"),
+        ("2 Esdras", "2Esd", ("2esd", "2esdras"), "2 Esdras"),
+        ("Tobit", "Tob", ("tob", "tobit"), "Tobit"),
+        ("Judith", "Jdt", ("jdt", "judith"), "Judith"),
+        ("Wisdom of Solomon", "Wis", ("wis", "wisdom", "wisdomofsolomon"), "Wisdom of Solomon"),
+        ("Ecclesiasticus", "Sir", ("sir", "sirach", "ecclesiasticus"), "Ecclesiasticus"),
+        ("Baruch", "Bar", ("bar", "baruch"), "Baruch"),
+        ("Letter of Jeremiah", "EpJer", ("epjer", "letterofjeremiah", "epistleofjeremiah"), "Letter of Jeremiah"),
+        ("Prayer of Azariah", "PrAz", ("praz", "prayerofazariah", "songofthreechildren"), "Prayer of Azariah"),
+        ("Susanna", "Sus", ("sus", "susanna"), "Susanna"),
+        ("Bel and the Dragon", "Bel", ("bel", "belandthedragon"), "Bel and the Dragon"),
+        ("Prayer of Manasseh", "PrMan", ("prman", "prayerofmanasseh", "manasseh"), "Prayer of Manasseh"),
+        ("1 Maccabees", "1Macc", ("1macc", "1maccabees"), "1 Maccabees"),
+        ("2 Maccabees", "2Macc", ("2macc", "2maccabees"), "2 Maccabees"),
+    ],
+}
+APOC_DB_KEYS = {ed: {a[3]: a for a in books} for ed, books in APOCRYPHA.items()}
+
 RULES = [
     ("N1", re.compile(r"&#(\d+);"), lambda m: chr(int(m.group(1)))),
     ("N1", re.compile(r"&thorn;"), "þ"),
@@ -192,12 +225,21 @@ def read_edition(db_dir, edition):
             raise DataError(f"{edition} {reference} bad reference")
         _prefix, db_book, ch, v = parts
         name = map_book(edition, db_book)
+        apoc = None
         if name is None:
-            continue  # Apocrypha / non-canonical
+            apoc = APOC_DB_KEYS.get(edition, {}).get(db_book)
+            if apoc is None:
+                continue  # anything else non-canonical
+            name = apoc[0]  # Apocrypha (Geneva and KJV 1611 only)
         ch, v = int(ch), int(v)
         if v == 0:
             continue
         t = normalize(text)
+        if apoc and not (text or "").strip():
+            # The 1611 text has no words at 2 Apocrypha verses (Sirach 1:7, 17:5). Verse keeps the empty row, so
+            # the number stays and the text is empty (the player skips an empty verse).
+            chapters.setdefault((name, ch), {})[v] = ""
+            continue
         if not text_ok(t):  # every verse must be non-empty and clean (no exceptions since Geneva 1599)
             raise DataError(f"{edition} {name} {ch}:{v}")
         chapters.setdefault((name, ch), {})[v] = t
@@ -214,7 +256,7 @@ def build(db_dir, out, editions=ALLOWED_EDITIONS, verse_commit=DEFAULT_VERSE_COM
     if out in ("/", os.path.expanduser("~")) or len(out) < 5:
         raise SystemExit(2)
 
-    data, names, shas, verse_counts = {}, {}, {}, {}
+    data, names, shas, verse_counts, apoc_verses = {}, {}, {}, {}, {}
     for ed in editions:
         chapters, ed_name, sha = read_edition(db_dir, ed)
         if ed_name != EDITION_META[ed][0]:
@@ -232,7 +274,27 @@ def build(db_dir, out, editions=ALLOWED_EDITIONS, verse_commit=DEFAULT_VERSE_COM
             if not per:
                 raise DataError(f"{ed} {name} missing")
             counts.append(per)
-        extra = [k for k in chapters if k[1] > len(counts[[b[1] for b in BOOKS].index(k[0])])]
+        apoc_counts = []
+        for name, _abbr, _al, _key in APOCRYPHA.get(ed, []):
+            per = []
+            ch = 1
+            while (name, ch) in chapters:
+                verses = chapters[(name, ch)]
+                if sorted(verses) != list(range(1, len(verses) + 1)):
+                    raise DataError(f"{ed} {name} {ch} verse gap")
+                per.append(len(verses))
+                ch += 1
+            if not per:
+                raise DataError(f"{ed} {name} missing")
+            apoc_counts.append(per)
+        known = {b[1] for b in BOOKS} | {a[0] for a in APOCRYPHA.get(ed, [])}
+        stray = [k for k in chapters if k[0] not in known]
+        if stray:
+            raise DataError(f"{ed} unexpected book {stray[0][0]}")
+        apoc_verses[ed] = apoc_counts
+        nchap = {b[1]: len(c) for b, c in zip(BOOKS, counts)}
+        nchap.update({a[0]: len(c) for a, c in zip(APOCRYPHA.get(ed, []), apoc_counts)})
+        extra = [k for k in chapters if k[1] > nchap[k[0]]]
         if extra:
             raise DataError(f"{ed} {extra[0][0]} {extra[0][1]} chapter gap")
         data[ed], names[ed], shas[ed], verse_counts[ed] = chapters, ed_name, sha, counts
@@ -257,7 +319,16 @@ def build(db_dir, out, editions=ALLOWED_EDITIONS, verse_commit=DEFAULT_VERSE_COM
                 words += sum(len(x["text"].split()) for x in vs)
                 files[f"{ed}/{abbr}/{ch}.json"] = dumps(
                     {"edition": ed, "book": name, "chapter": ch, "verses": vs})
-        log(f"{ed} books={len(BOOKS)} chapters={sum(len(p) for p in first)} verses={nverses} words={words}")
+        for (name, abbr, _al, _key), per in zip(APOCRYPHA.get(ed, []), apoc_verses[ed]):
+            for ch in range(1, len(per) + 1):
+                verses = data[ed][(name, ch)]
+                vs = [{"v": v, "text": verses[v]} for v in range(1, per[ch - 1] + 1)]
+                nverses += len(vs)
+                words += sum(len(x["text"].split()) for x in vs)
+                files[f"{ed}/{abbr}/{ch}.json"] = dumps(
+                    {"edition": ed, "book": name, "chapter": ch, "verses": vs})
+        log(f"{ed} books={len(BOOKS)}+{len(APOCRYPHA.get(ed, []))} apocrypha chapters={sum(len(p) for p in first)}"
+            f"+{sum(len(p) for p in apoc_verses[ed])} verses={nverses} words={words}")
 
     h = hashlib.sha256()
     for rel in sorted(files):
@@ -274,6 +345,17 @@ def build(db_dir, out, editions=ALLOWED_EDITIONS, verse_commit=DEFAULT_VERSE_COM
                    "testament": "OT" if n <= 39 else "NT", "aliases": list(al), "verses": per}
                   for (n, name, abbr, al), per in zip(BOOKS, first)],
     }
+    # Apocrypha books per edition (Geneva and KJV 1611 only). testament "AP"; n continues after Revelation (67..).
+    # `books` stays the shared 66; an edition-specific file (offline build) inserts its own list between the OT and the NT.
+    apoc_index = {}
+    for ed in editions:
+        if ed in APOCRYPHA:
+            apoc_index[ed] = [
+                {"n": 66 + i, "name": name, "abbr": abbr, "slug": name.replace(" ", "-"),
+                 "testament": "AP", "aliases": list(al), "verses": per}
+                for i, ((name, abbr, al, _k), per) in enumerate(zip(APOCRYPHA[ed], apoc_verses[ed]), 1)]
+    if apoc_index:
+        index["apocrypha"] = apoc_index
     files["index.json"] = dumps(index)
 
     nj = ng = nb = 0
