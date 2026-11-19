@@ -13,8 +13,10 @@ async function acquire() {
   if (!wl || !want || document.hidden) return;
   if (sentinel && !sentinel.released) return;
   try {
-    sentinel = await wl.request('screen');
-    sentinel.addEventListener('release', () => { sentinel = null; });
+    const s = await wl.request('screen');
+    if (!want) { try { await s.release(); } catch { /* ignore */ } return; }
+    sentinel = s;
+    s.addEventListener('release', () => { if (sentinel === s) sentinel = null; });
   } catch {
     sentinel = null; // unsupported permission / battery / policy — fine
   }
