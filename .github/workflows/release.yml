@@ -10,7 +10,10 @@
 #   1. build-scan: build, SBOM (syft), OSV-Scanner + scripts/osv_gate.py
 #      (fails on CVSS >= 7.0; lower scored findings also hold the release;
 #      unscored advisories are ::warning:: only), SHA256SUMS written and
-#      verified.
+#      verified. The combined word-offline-<date>-all-editions.zip and .tar.gz
+#      (every edition + README.txt + LICENSE, deterministic) are built by
+#      scripts/make_archives.py before the checksums, so they are in
+#      SHA256SUMS, attested and scanned like the HTML files.
 #   2. virustotal: optional, only if vars.ENABLE_VIRUSTOTAL == 'true' AND the
 #      VT_API_KEY secret is set, and only on a public repo.
 #   3. release: re-verifies SHA256SUMS, attests, publishes the release with
@@ -66,6 +69,7 @@ jobs:
       tag: ${{ steps.meta.outputs.tag }}
       title: ${{ steps.meta.outputs.title }}
       prefix: ${{ steps.meta.outputs.prefix }}
+      date: ${{ steps.meta.outputs.date }}
       gate: ${{ steps.scan.outputs.gate }}
     steps:
       - name: Check out
@@ -102,6 +106,7 @@ jobs:
           date="${BASH_REMATCH[1]}"
           {
             echo "tag=$tag"
+            echo "date=$date"
             echo "title=Word offline ${date:0:4}-${date:4:2}-${date:6:2}"
             echo "prefix=word-offline-$date"
           } >> "$GITHUB_OUTPUT"
@@ -130,6 +135,18 @@ jobs:
           grep -v '^First offline release\.$' "$RUNNER_TEMP/offline-out/RELEASE-NOTES.md" > notes/intro.md
           ls -l dist
 
+      # One combined zip and one tar.gz holding every edition, README.txt and
+      # LICENSE. Deterministic (sorted, fixed mtimes), checked against the
+      # source files. Made before SHA256SUMS, so they are checksummed,
+      # attested and shipped like the HTML files.
+      - name: Build and verify the all-editions archives
+        env:
+          DATE: ${{ steps.meta.outputs.date }}
+        run: |
+          python3 scripts/make_archives.py build --html-dir dist --out-dir dist --date "$DATE" --license LICENSE
+          python3 scripts/make_archives.py verify --html-dir dist --out-dir dist --date "$DATE" --license LICENSE
+          ls -l dist
+
       - name: Stage SBOM input (lockfile + release files)
         run: |
           mkdir -p "$RUNNER_TEMP/sbom-root"
@@ -149,6 +166,9 @@ jobs:
 
       - name: Self-test the OSV severity gate
         run: python3 -m unittest -v tests.test_osv_gate
+
+      - name: Self-test the all-editions archive builder
+        run: python3 -m unittest -v tests.test_make_archives
 
       - name: Install OSV-Scanner (checksum-verified)
         run: |
@@ -279,7 +299,7 @@ jobs:
             exit 1
           fi
           set +e
-          bash scripts/virustotal_check.sh vt-report/virustotal.md dist/word-geneva1599.html dist/word-kjv.html dist/word-kjv1611.html
+          bash scripts/virustotal_check.sh vt-report/virustotal.md dist/word-geneva1599.html dist/word-kjv.html dist/word-kjv1611.html dist/word-offline-*-all-editions.zip dist/word-offline-*-all-editions.tar.gz
           rc=$?
           set -e
           if [ -f vt-report/virustotal.md ]; then cat vt-report/virustotal.md >> "$GITHUB_STEP_SUMMARY"; fi
@@ -341,6 +361,15 @@ jobs:
         working-directory: dist
         run: sha256sum -c SHA256SUMS
 
+      - name: Check the all-editions archives match the HTML files
+        env:
+          DATE: ${{ needs.build-scan.outputs.date }}
+        run: |
+          python3 scripts/make_archives.py verify --contents-only --html-dir dist --out-dir dist --date "$DATE" --license LICENSE
+          test "$(find dist -maxdepth 1 \( -name 'word-offline-*-all-editions.zip' -o -name 'word-offline-*-all-editions.tar.gz' \) | wc -l)" -eq 2
+          grep -q -- "-all-editions.zip$" dist/SHA256SUMS
+          grep -q -- "-all-editions.tar.gz$" dist/SHA256SUMS
+
       - name: Check the scan passed and the badge data says so
         run: |
           test -f dist/verification.json
@@ -361,7 +390,9 @@ jobs:
         if: github.event.repository.visibility == 'public' || vars.ATTESTATIONS_AVAILABLE == 'true'
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-path: dist/word-*.html
+          subject-path: |
+            dist/word-*.html
+            dist/word-*-all-editions.*
           sbom-path: dist/${{ env.PREFIX }}.cdx.json
 
       # Signed-release files (OpenSSF Scorecard "Signed-Releases"): the
@@ -401,6 +432,7 @@ jobs:
             echo
             echo "Built and scanned by [this workflow run](${RUN_URL}) on $(jq -r .date dist/verification.json): OSV-Scanner $(jq -r .tool_version dist/verification.json), 0 known vulnerabilities."
             echo
+            echo "- \`${PREFIX}-all-editions.zip\` / \`.tar.gz\`: every edition in one download (plus README.txt and LICENSE)"
             echo "- \`SHA256SUMS\`: checksums for every file in this release (\`sha256sum -c --ignore-missing SHA256SUMS\`)"
             echo "- \`${PREFIX}.cdx.json\`: CycloneDX SBOM"
             echo "- \`${PREFIX}-osv-scan.json\` / \`.md\`: OSV-Scanner report for the date above"
