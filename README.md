@@ -191,7 +191,7 @@ OpenSSF Scorecard JSON. Index of all runs, newest first:
 [security/latest.json](security/latest.json)).
 
 <!-- security-reports:start -->
-Latest: none yet. The first verified release adds its report here. All runs: [security/README.md](security/README.md).
+Latest: `offline-20261119-2` on 2026-11-19 22:52:23 UTC, result **pass** ([summary](security/reports/offline-20261119-2_20261119T225223Z/summary.md)). All runs: [security/README.md](security/README.md).
 <!-- security-reports:end -->
 
 ---

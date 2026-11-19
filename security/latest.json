@@ -1,9 +1,8 @@
 {
-  "tag": null,
-  "timestamp": null,
-  "date_utc": null,
-  "result": "none",
-  "folder": null,
-  "summary": null,
-  "note": "No release has been verified by the workflow yet."
+  "tag": "offline-20261119-2",
+  "timestamp": "20261119T225223Z",
+  "date_utc": "2026-11-19T22:52:23Z",
+  "result": "pass",
+  "folder": "reports/offline-20261119-2_20261119T225223Z",
+  "summary": "reports/offline-20261119-2_20261119T225223Z/summary.md"
 }
