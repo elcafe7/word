@@ -8,9 +8,9 @@ const DIR = path.resolve(process.env.WORD_OFFLINE_DIR);
 const SHOTS = process.env.WORD_OFFLINE_SHOTS ? path.resolve(process.env.WORD_OFFLINE_SHOTS) : null;
 const RELEASE = /^https:\/\/github\.com\/elcafe7\/word\/releases\/tag\/offline-\d{8}(-\d+)?$/;
 const EDITIONS = [
-  { id: 'gen', file: 'word-geneva1599.html', short: 'Geneva', header: 'Geneva (1599)', name: 'Geneva Bible (1599)', label: 'Geneva 1599', apoc: 7, lastApoc: ['2 Maccabees', 15] },
+  { id: 'gen', file: 'word-geneva1599.html', short: 'Geneva', header: 'Geneva (1599)', name: 'Geneva Bible (1599)', label: 'Geneva 1599', apoc: 7, lastVerse: 40 },
   { id: 'kjv', file: 'word-kjv.html', short: 'KJV', header: 'KJV (Oxford 1769)', name: 'King James Version (Oxford 1769)', label: 'KJV', apoc: 0 },
-  { id: 'kj16', file: 'word-kjv1611.html', short: 'KJV 1611', header: 'KJV (1611 Original)', name: 'King James Version (1611 Original)', label: 'KJV 1611', apoc: 14, lastApoc: ['2 Maccabees', 15] },
+  { id: 'kj16', file: 'word-kjv1611.html', short: 'KJV 1611', header: 'KJV (1611 Original)', name: 'King James Version (1611 Original)', label: 'KJV 1611', apoc: 14, lastVerse: 39 },
 ];
 const url = (e, hash = '') => pathToFileURL(path.join(DIR, e.file)).href + hash;
 const tid = (page, id) => page.locator(`[data-testid="${id}"]`);
@@ -144,10 +144,10 @@ for (const e of EDITIONS) {
       await page.evaluate(() => { location.hash = '#/Revelation-22-21'; });
       await expect(tid(page, 'status-text')).toHaveText('Revelation 22:21');
       if (e.apoc) {
-        // Geneva and KJV 1611 read on from Revelation into the Apocrypha; their end is the last verse of 2 Maccabees.
+        // Geneva and KJV 1611 read on from Revelation into the Apocrypha; their end is the last verse of 2 Maccabees (15:40 Geneva, 15:39 KJV 1611).
         await expect(tid(page, 'btn-forward')).toBeEnabled();
-        await page.evaluate(() => { location.hash = '#/2-Maccabees-15-39'; });
-        await expect(tid(page, 'status-text')).toHaveText('2 Maccabees 15:39');
+        await page.evaluate((v) => { location.hash = `#/2-Maccabees-15-${v}`; }, e.lastVerse);
+        await expect(tid(page, 'status-text')).toHaveText(`2 Maccabees 15:${e.lastVerse}`);
         await expect(tid(page, 'btn-forward')).toBeDisabled();
       } else {
         await expect(tid(page, 'btn-forward')).toBeDisabled();
