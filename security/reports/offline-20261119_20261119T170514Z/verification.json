@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "tool": "OSV-Scanner",
+  "tool_version": "2.7.0",
+  "date": "2026-11-19",
+  "scanned_at": "2026-11-19T17:04:35Z",
+  "result": "pass",
+  "known_vulnerabilities": 0,
+  "unscored": 0,
+  "threshold_cvss": 7.0,
+  "report_url": "https://github.com/elcafe7/word/releases/download/offline-20261119/word-offline-20261119-osv-scan.md",
+  "release": "offline-20261119",
+  "repository": "elcafe7/word",
+  "stale_after_days": 30
+}
