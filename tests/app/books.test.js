@@ -46,6 +46,25 @@ describe('canonical order', () => {
   });
 });
 
+describe('Apocrypha books (edition index with books 67+)', () => {
+  const apoc = full.apocrypha.gen;
+  const ix = { ...full, books: [...full.books, ...apoc], apocrypha: undefined };
+  it('loadIndex accepts the 66 plus an edition\'s Apocrypha', async () => {
+    const out = await loadIndex(async () => ({ ok: true, status: 200, json: async () => ix }), '/word/');
+    expect(out.books.length).toBe(66 + apoc.length);
+  });
+  it('finds Sirach and reads on from Revelation into Tobit; ends after 2 Maccabees', () => {
+    expect(findBook(ix, 'sirach')?.name).toBe('Ecclesiasticus');
+    expect(nextChapter(ix, 'Rev', 22)).toEqual({ abbr: 'Tob', chapter: 1 });
+    expect(prevChapter(ix, 'Tob', 1)).toEqual({ abbr: 'Rev', chapter: 22 });
+    const last = apoc[apoc.length - 1];
+    expect(nextChapter(ix, last.abbr, last.verses.length)).toBeNull();
+  });
+  it('the shared index stays the Protestant 66', () => {
+    expect(nextVerse(full, 'Rev', 22, 21)).toBeNull();
+  });
+});
+
 describe('loadIndex', () => {
   it('fetches index.json with no-cache and a cache-buster', async () => {
     const calls = [];

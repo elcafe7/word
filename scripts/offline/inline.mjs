@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Inlines one WORD_OFFLINE vite build into a single self-contained HTML file (offline SPEC §2.2, §2.8).
 // Usage: node scripts/offline/inline.mjs <dist-dir> <data-dir> <gen|kjv|kj16> <YYYYMMDD> <commit7> <out.html>
-// Checks (any failure exits 1): no src/href outside https:/data:/#; no leak strings in the app shell; 66 books;
+// Checks (any failure exits 1): no src/href outside https:/data:/#; no leak strings in the app shell; 66 books (+ Apocrypha for Geneva and KJV 1611);
 // chapter and verse counts and every verse text equal the online JSON (through the real offlineFetch);
-// no "</script" inside the JSON blocks; size 3.5-5.0 MB. Never overwrites <out.html>.
+// no "</script" inside the JSON blocks; size 3.5-5.5 MB. Never overwrites <out.html>.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -17,7 +17,7 @@ export const LABELS = {
 };
 export const DONATE_URL = 'https://jesuspeoplesf.com/donate/';
 const MIN = 3.5e6;
-const MAX = 5.0e6;
+const MAX = 5.5e6; // was 5.0e6 before the Apocrypha (KJV 1611 is ~5.1 MB with it)
 
 const fail = (msg) => {
   console.error(`inline.mjs: FAIL: ${msg}`);
@@ -38,9 +38,17 @@ export function buildData(dataDir, ed) {
   if (!Array.isArray(index.books) || index.books.length !== 66) fail('index.json must list 66 books');
   const edition = index.editions.find((e) => e.id === ed);
   if (!edition) fail(`edition ${ed} not in index.json`);
+  // This edition's books: the shared 66 plus its Apocrypha (Geneva 1599 and KJV 1611 only; the Oxford KJV has none).
+  const apoc = index.apocrypha?.[ed] ?? [];
+  if (ed === 'kjv' && apoc.length) fail('kjv must not have Apocrypha');
+  if ((ed === 'gen' || ed === 'kj16') && !apoc.length) fail(`${ed} must include the Apocrypha`);
+  apoc.forEach((b, i) => {
+    if (b.n !== 67 + i || b.testament !== 'AP') fail(`apocrypha ${b.abbr}: n/testament`);
+  });
+  const allBooks = [...index.books, ...apoc];
   const data = {};
   const online = new Map();
-  for (const b of index.books) {
+  for (const b of allBooks) {
     const chapters = [];
     b.verses.forEach((count, i) => {
       const ch = i + 1;
@@ -57,9 +65,10 @@ export function buildData(dataDir, ed) {
     });
     data[b.abbr] = chapters;
   }
-  const { source, ...rest } = index;
+  const { source, apocrypha: _apocrypha, ...rest } = index;
   const oneIndex = {
     ...rest,
+    books: allBooks,
     source: source ? { ...source, dbSha256: source.dbSha256 ? { [ed]: source.dbSha256[ed] } : undefined } : undefined,
     editions: [edition],
   };
@@ -68,6 +77,7 @@ export function buildData(dataDir, ed) {
 
 /** Full compare through the app's own offlineFetch (src/app/offline-data.js). */
 async function verifyData(oneIndex, data, online, ed, html) {
+  const apocCount = oneIndex.books.length - 66;
   const { createOfflineFetch } = await import(pathToFileURL(path.join(ROOT, 'src/app/offline-data.js')).href);
   // Parse the blocks back out of the finished HTML, exactly as the browser will see them.
   const grab = (id) => {
@@ -80,7 +90,7 @@ async function verifyData(oneIndex, data, online, ed, html) {
   const doc = { getElementById: (id) => (id in blocks ? { textContent: blocks[id] } : null) };
   const f = createOfflineFetch(doc, ed);
   const ix = await (await f(`./data/index.json?v=x`)).json();
-  if (ix.books.length !== 66 || ix.editions.length !== 1 || ix.editions[0].id !== ed) fail('inline index wrong');
+  if (ix.books.length !== 66 + apocCount || ix.editions.length !== 1 || ix.editions[0].id !== ed) fail('inline index wrong');
   let chapters = 0;
   let verses = 0;
   for (const b of ix.books) {
@@ -97,7 +107,7 @@ async function verifyData(oneIndex, data, online, ed, html) {
   }
   const other = ed === 'kjv' ? 'gen' : 'kjv';
   if ((await f(`./data/${other}/John/3.json`)).ok) fail('another edition must 404');
-  return { books: ix.books.length, chapters, verses };
+  return { books: ix.books.length, apocrypha: apocCount, chapters, verses };
 }
 
 export function leakCheck(shell) {
@@ -183,9 +193,9 @@ async function main() {
   if (hits.length) fail(`leak check: ${hits.join(', ')}`);
   const counts = await verifyData(oneIndex, data, online, ed, html);
   const bytes = Buffer.byteLength(html, 'utf8');
-  if (bytes < MIN || bytes > MAX) fail(`size ${bytes} B outside 3.5-5.0 MB`);
+  if (bytes < MIN || bytes > MAX) fail(`size ${bytes} B outside 3.5-5.5 MB`);
   fs.writeFileSync(out, html, { flag: 'wx' });
-  console.error(`inline.mjs: ${path.basename(out)} ${bytes} B, ${counts.books} books, ${counts.chapters} chapters, ${counts.verses} verses, shell ${Buffer.byteLength(shell)} B`);
+  console.error(`inline.mjs: ${path.basename(out)} ${bytes} B, ${counts.books} books (${counts.apocrypha} Apocrypha), ${counts.chapters} chapters, ${counts.verses} verses, shell ${Buffer.byteLength(shell)} B`);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) await main();

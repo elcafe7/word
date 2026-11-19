@@ -8,9 +8,9 @@ const DIR = path.resolve(process.env.WORD_OFFLINE_DIR);
 const SHOTS = process.env.WORD_OFFLINE_SHOTS ? path.resolve(process.env.WORD_OFFLINE_SHOTS) : null;
 const RELEASE = /^https:\/\/github\.com\/elcafe7\/word\/releases\/tag\/offline-\d{8}(-\d+)?$/;
 const EDITIONS = [
-  { id: 'gen', file: 'word-geneva1599.html', short: 'Geneva', header: 'Geneva (1599)', name: 'Geneva Bible (1599)', label: 'Geneva 1599' },
-  { id: 'kjv', file: 'word-kjv.html', short: 'KJV', header: 'KJV (Oxford 1769)', name: 'King James Version (Oxford 1769)', label: 'KJV' },
-  { id: 'kj16', file: 'word-kjv1611.html', short: 'KJV 1611', header: 'KJV (1611 Original)', name: 'King James Version (1611 Original)', label: 'KJV 1611' },
+  { id: 'gen', file: 'word-geneva1599.html', short: 'Geneva', header: 'Geneva (1599)', name: 'Geneva Bible (1599)', label: 'Geneva 1599', apoc: 7, lastApoc: ['2 Maccabees', 15] },
+  { id: 'kjv', file: 'word-kjv.html', short: 'KJV', header: 'KJV (Oxford 1769)', name: 'King James Version (Oxford 1769)', label: 'KJV', apoc: 0 },
+  { id: 'kj16', file: 'word-kjv1611.html', short: 'KJV 1611', header: 'KJV (1611 Original)', name: 'King James Version (1611 Original)', label: 'KJV 1611', apoc: 14, lastApoc: ['2 Maccabees', 15] },
 ];
 const url = (e, hash = '') => pathToFileURL(path.join(DIR, e.file)).href + hash;
 const tid = (page, id) => page.locator(`[data-testid="${id}"]`);
@@ -88,7 +88,13 @@ for (const e of EDITIONS) {
       await tid(page, 'status').click();
       await expect(tid(page, 'picker')).toBeVisible();
       await expect(page.locator('#picker-editions')).toBeHidden();
-      await expect(tid(page, 'picker-book')).toHaveCount(66);
+      await expect(tid(page, 'picker-book')).toHaveCount(66 + e.apoc);
+      // Apocrypha section: Geneva and KJV 1611 only; the Oxford KJV stays the Protestant 66
+      await expect(tid(page, 'picker-heading-ap')).toHaveCount(e.apoc ? 1 : 0);
+      if (e.apoc) {
+        await expect(tid(page, 'picker-heading-ap')).toHaveText('Apocrypha');
+        await expect(tid(page, 'picker-grid-ap').locator('[data-testid="picker-book"]')).toHaveCount(e.apoc);
+      }
       const others = tid(page, 'picker-other-versions').locator('a');
       await expect(others).toHaveCount(2);
       for (const a of await others.all()) {
@@ -137,7 +143,46 @@ for (const e of EDITIONS) {
       await expect(tid(page, 'status-text')).toHaveText('Matthew 1:1');
       await page.evaluate(() => { location.hash = '#/Revelation-22-21'; });
       await expect(tid(page, 'status-text')).toHaveText('Revelation 22:21');
-      await expect(tid(page, 'btn-forward')).toBeDisabled();
+      if (e.apoc) {
+        // Geneva and KJV 1611 read on from Revelation into the Apocrypha; their end is the last verse of 2 Maccabees.
+        await expect(tid(page, 'btn-forward')).toBeEnabled();
+        await page.evaluate(() => { location.hash = '#/2-Maccabees-15-39'; });
+        await expect(tid(page, 'status-text')).toHaveText('2 Maccabees 15:39');
+        await expect(tid(page, 'btn-forward')).toBeDisabled();
+      } else {
+        await expect(tid(page, 'btn-forward')).toBeDisabled();
+      }
+      expect(g.offsite()).toEqual([]);
+      expect(g.errors).toEqual([]);
+    });
+
+    test('Apocrypha: Geneva and KJV 1611 open Tobit, 1 Maccabees and Sirach from the picker; KJV has none', async ({ page }) => {
+      const g = await guard(page);
+      await page.goto(url(e));
+      await dismissWelcome(page);
+      await ready(page);
+      const first = e.id === 'gen' ? { Tobit: 'The', '1 Maccabees': 'After', Ecclesiasticus: 'All' } : { Tobit: 'The', '1 Maccabees': 'And', Ecclesiasticus: 'This' };
+      for (const [name, firstWord] of Object.entries(first)) {
+        if (!e.apoc) {
+          await page.evaluate((h) => { location.hash = h; }, `#/${name.replace(/ /g, '-')}-1-1`);
+          await expect(tid(page, 'status-text')).not.toHaveText(`${name} 1:1`);
+          continue;
+        }
+        await tid(page, 'status').click();
+        await tid(page, 'picker-book').filter({ hasText: new RegExp(`^${name}$`) }).click();
+        await tid(page, 'picker-chapter').filter({ hasText: /^1$/ }).click();
+        await tid(page, 'picker-verse').filter({ hasText: /^1$/ }).click();
+        await expect(tid(page, 'picker')).toBeHidden();
+        await expect(tid(page, 'status-text')).toHaveText(`${name} 1:1`);
+        await expect(tid(page, 'word')).toContainText(firstWord);
+      }
+      if (e.apoc) {
+        // typed names and the common Sirach alias
+        await tid(page, 'status').click();
+        await tid(page, 'picker-book-filter').fill('sirach 1:1');
+        await page.keyboard.press('Enter');
+        await expect(tid(page, 'status-text')).toHaveText('Ecclesiasticus 1:1');
+      }
       expect(g.offsite()).toEqual([]);
       expect(g.errors).toEqual([]);
     });

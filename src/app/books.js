@@ -45,7 +45,7 @@ export async function fetchJson(fetchFn, url, init) {
  */
 export async function loadIndex(fetchFn, base) {
   const ix = await fetchJson(fetchFn, `${base}data/index.json?v=${BUILD_ID}`, { cache: 'no-cache' });
-  if (!ix || !Array.isArray(ix.books) || ix.books.length !== 66 || !Array.isArray(ix.editions)) {
+  if (!ix || !Array.isArray(ix.books) || ix.books.length < 66 || !Array.isArray(ix.editions)) {
     throw new LoadError('json');
   }
   return ix;
