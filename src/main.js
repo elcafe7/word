@@ -19,6 +19,7 @@ import { createBrake } from './app/ui/brake.js';
 import { installKeys } from './app/ui/keys.js';
 import { installOfflineFetch } from './app/offline-data.js';
 import { installOfflineUi, removeQuickLookHint } from './app/offline.js';
+import * as wakelock from './app/wakelock.js';
 import { formatHash, hashPath, writeHash } from './app/route.js';
 
 /* global __WORD_OFFLINE__, __WORD_OFFLINE_EDITION__, __WORD_OFFLINE_LABEL__ */
@@ -114,6 +115,8 @@ function boot(index) {
       card.setLoading(s.loading);
       controls.renderPlay(s, settings.wpm);
       if (!s.playing && s.edition) persist();
+      if (s.playing) void wakelock.request();
+      else void wakelock.release();
     },
     onError: (e) => {
       const ed = editionById(index, e.edition);
@@ -275,6 +278,7 @@ function boot(index) {
     },
   });
 
+  wakelock.init();
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') persist();
   });
