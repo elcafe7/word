@@ -95,8 +95,8 @@ export function createPicker(index, h) {
     const r = parseQuery(index, q, st.current);
     if (r.kind === 'empty') {
       filter.setAttribute('aria-expanded', 'false');
-      // The Apocrypha section appears only when this edition's index lists such books (Geneva 1599, KJV 1611).
-      for (const [t, label] of [['OT', 'Old Testament'], ['NT', 'New Testament'], ['AP', 'Apocrypha']]) {
+      // Apocrypha sits between the Testaments when this edition lists it (Geneva 1599, KJV 1611).
+      for (const [t, label] of [['OT', 'Old Testament'], ['AP', 'Apocrypha'], ['NT', 'New Testament']]) {
         const inSection = index.books.filter((b) => b.testament === t);
         if (!inSection.length) continue;
         booksBox.append(el('h2', { class: 'picker-heading', 'data-testid': `picker-heading-${t.toLowerCase()}` }, label));

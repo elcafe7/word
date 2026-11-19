@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { booksForEdition } from '../../src/app/books.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
@@ -38,14 +39,23 @@ export function buildData(dataDir, ed) {
   if (!Array.isArray(index.books) || index.books.length !== 66) fail('index.json must list 66 books');
   const edition = index.editions.find((e) => e.id === ed);
   if (!edition) fail(`edition ${ed} not in index.json`);
-  // This edition's books: the shared 66 plus its Apocrypha (Geneva 1599 and KJV 1611 only; the Oxford KJV has none).
+  // This edition's books: OT, then its Apocrypha (Geneva 1599 and KJV 1611 only; the Oxford KJV has none), then NT.
   const apoc = index.apocrypha?.[ed] ?? [];
   if (ed === 'kjv' && apoc.length) fail('kjv must not have Apocrypha');
   if ((ed === 'gen' || ed === 'kj16') && !apoc.length) fail(`${ed} must include the Apocrypha`);
   apoc.forEach((b, i) => {
     if (b.n !== 67 + i || b.testament !== 'AP') fail(`apocrypha ${b.abbr}: n/testament`);
   });
-  const allBooks = [...index.books, ...apoc];
+  const allBooks = booksForEdition(index, ed);
+  const mal = allBooks.findIndex((b) => b.abbr === 'Mal');
+  const matt = allBooks.findIndex((b) => b.abbr === 'Matt');
+  const rev = allBooks.findIndex((b) => b.abbr === 'Rev');
+  if (mal !== 38 || rev !== allBooks.length - 1) fail(`${ed}: Malachi/Revelation placement`);
+  if (ed === 'kjv') {
+    if (matt !== 39 || allBooks.length !== 66) fail('kjv book order');
+  } else if (allBooks[mal + 1].testament !== 'AP' || allBooks[matt - 1].testament !== 'AP' || matt !== 39 + apoc.length) {
+    fail(`${ed}: Apocrypha must sit between Malachi and Matthew`);
+  }
   const data = {};
   const online = new Map();
   for (const b of allBooks) {

@@ -87,21 +87,41 @@ export function editionById(index, id) {
   return index.editions.find((e) => e.id === id) ?? null;
 }
 
-/** Next chapter in canonical order, or null after Revelation 22. */
+/**
+ * Reading and picker order for one edition: Old Testament, then that edition's
+ * Apocrypha (Geneva 1599 and KJV 1611, in the edition's own order), then New
+ * Testament. The Oxford KJV has none. If `index.books` already includes the
+ * Apocrypha (offline single-edition index), it is returned as-is.
+ * @param {Index} index
+ * @param {string} [editionId]
+ * @returns {Book[]}
+ */
+export function booksForEdition(index, editionId) {
+  if (index.books.some((b) => b.testament === 'AP')) return index.books;
+  const apoc = (index.apocrypha && index.apocrypha[editionId]) || [];
+  return [
+    ...index.books.filter((b) => b.testament === 'OT'),
+    ...apoc,
+    ...index.books.filter((b) => b.testament === 'NT'),
+  ];
+}
+
+/** Next chapter in this index's book order, or null after the last book. */
 export function nextChapter(index, abbr, ch) {
-  const b = bookByAbbr(index, abbr);
-  if (!b) return null;
+  const i = index.books.findIndex((b) => b.abbr === abbr);
+  if (i < 0) return null;
+  const b = index.books[i];
   if (ch < b.verses.length) return { abbr, chapter: ch + 1 };
-  const nb = index.books.find((x) => x.n === b.n + 1);
+  const nb = index.books[i + 1];
   return nb ? { abbr: nb.abbr, chapter: 1 } : null;
 }
 
-/** Previous chapter in canonical order, or null before Genesis 1. */
+/** Previous chapter in this index's book order, or null before Genesis 1. */
 export function prevChapter(index, abbr, ch) {
-  const b = bookByAbbr(index, abbr);
-  if (!b) return null;
+  const i = index.books.findIndex((b) => b.abbr === abbr);
+  if (i < 0) return null;
   if (ch > 1) return { abbr, chapter: ch - 1 };
-  const pb = index.books.find((x) => x.n === b.n - 1);
+  const pb = index.books[i - 1];
   return pb ? { abbr: pb.abbr, chapter: pb.verses.length } : null;
 }
 
@@ -113,7 +133,7 @@ export function prevVerse(index, abbr, ch, v) {
   return { ...p, verse: bookByAbbr(index, p.abbr).verses[p.chapter - 1] };
 }
 
-/** Next verse reference, or null at Revelation 22:21. */
+/** Next verse reference, or null at the last verse of the last book (Revelation 22:21 in every edition). */
 export function nextVerse(index, abbr, ch, v) {
   const b = bookByAbbr(index, abbr);
   if (b && v < b.verses[ch - 1]) return { abbr, chapter: ch, verse: v + 1 };

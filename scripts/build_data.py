@@ -346,7 +346,7 @@ def build(db_dir, out, editions=ALLOWED_EDITIONS, verse_commit=DEFAULT_VERSE_COM
                   for (n, name, abbr, al), per in zip(BOOKS, first)],
     }
     # Apocrypha books per edition (Geneva and KJV 1611 only). testament "AP"; n continues after Revelation (67..).
-    # `books` stays the shared 66; an edition-specific file (offline build) appends its own list to `books`.
+    # `books` stays the shared 66; an edition-specific file (offline build) inserts its own list between the OT and the NT.
     apoc_index = {}
     for ed in editions:
         if ed in APOCRYPHA:
