@@ -1,12 +1,13 @@
 // Browser storage (SPEC §5.5). Every access is guarded: storage failures mean defaults, no persistence.
 
 export const DEFAULT_SETTINGS = Object.freeze({
-  v: 1, wpm: 300, frameSize: 1, redLetter: true, commaMult: 1.5, sentenceMult: 2.0, verseMult: 2.5, status: 'semi',
+  v: 1, wpm: 300, frameSize: 1, fontPct: 100, redLetter: true, commaMult: 1.5, sentenceMult: 2.0, verseMult: 2.5, status: 'semi',
 });
 
 const RULES = {
   wpm: (x) => Number.isInteger(x) && x >= 100 && x <= 900 && x % 25 === 0,
   frameSize: (x) => Number.isInteger(x) && x >= 1 && x <= 3,
+  fontPct: (x) => Number.isInteger(x) && x >= 50 && x <= 300,
   redLetter: (x) => typeof x === 'boolean',
   commaMult: (x) => isStep(x, 1, 3),
   sentenceMult: (x) => isStep(x, 1, 4),
