@@ -56,6 +56,8 @@ Each Bible is **one HTML file**. Download it once, then open it any time with no
 
 Each file has the 66 books of the Old and New Testaments. The Geneva (1599) and KJV 1611 files also include the Apocrypha (7 and 14 books, in the book picker between the Old and New Testaments, and in that same reading order); the KJV (Oxford 1769) file has none. All three files and their checksums are also on the [release page](https://github.com/elcafe7/word/releases/latest).
 
+**Want every edition at once?** Newer releases also have `word-offline-<YYYYMMDD>-all-editions.zip` and `.tar.gz` on the [release page](https://github.com/elcafe7/word/releases/latest): all three files, a short `README.txt` and the `LICENSE` in one download.
+
 **On a phone?** The easiest way is to read online at [apocalypse.press/word](https://apocalypse.press/word/), and you can add it to your home screen from your browser's Share or menu button. To use the downloaded file on a phone, see **Android** and **iPhone / iPad** below.
 
 ## Opening the file

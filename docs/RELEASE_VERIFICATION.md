@@ -206,3 +206,14 @@ settings.
 4. **Actions secrets/variables**: add `VT_API_KEY` and `ENABLE_VIRUSTOTAL=true` only
    if VirusTotal is wanted (see above).
 
+## All-editions archives
+
+Each release also ships `word-offline-<YYYYMMDD>-all-editions.zip` and `.tar.gz`:
+every edition HTML file plus a short `README.txt` and the `LICENSE`, inside one
+folder. `scripts/make_archives.py` builds them deterministically (files sorted,
+every timestamp fixed to the release date, no gzip name or time), so the same
+HTML files always give byte-identical archives. The build checks that a rebuild is
+identical and that every file inside matches its source; the release job checks
+the contents again before publishing. The archives are listed in `SHA256SUMS`,
+covered by the provenance and SBOM attestations, and sent to VirusTotal (when on)
+with the HTML files.
