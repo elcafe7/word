@@ -3,7 +3,8 @@ import gzip
 import json
 import os
 import shutil
-import subprocess
+# Test harnesses use subprocess to exercise real CLI boundaries with fixed executables and isolated temporary data.
+import subprocess  # nosec B404
 import sys
 import tempfile
 import unittest
@@ -48,7 +49,8 @@ class BuildDataTest(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.mkdtemp()
         cls.out = os.path.join(cls.tmp, "data")
-        cls.proc = subprocess.run(
+        # Arguments are fixed by the tests; executable arrays avoid shell parsing.
+        cls.proc = subprocess.run(  # nosec B603
             [sys.executable, os.path.join(HERE, "build_data.py"), "--db-dir", DB_DIR, "--out", cls.out],
             capture_output=True, text=True)
         with open(os.path.join(cls.out, "index.json"), encoding="utf-8") as f:
