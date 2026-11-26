@@ -1,7 +1,8 @@
 """scripts/make_archives.py: all-editions archives are complete and deterministic."""
 
 import hashlib
-import subprocess
+# Test harnesses use subprocess to exercise real CLI boundaries with fixed executables and isolated temporary data.
+import subprocess  # nosec B404
 import sys
 import tarfile
 import tempfile
@@ -17,7 +18,8 @@ FIXED_MTIME = 1795046400  # 2026-11-19 00:00:00 UTC
 
 
 def run(mode, html, out, *extra, date=DATE):
-    return subprocess.run(
+    # Arguments are fixed by the tests; executable arrays avoid shell parsing.
+    return subprocess.run(  # nosec B603
         [sys.executable, str(SCRIPT), mode, "--html-dir", str(html), "--out-dir", str(out),
          "--date", date, "--license", str(ROOT / "LICENSE"), *extra],
         capture_output=True, text=True, check=False,
