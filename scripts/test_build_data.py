@@ -149,7 +149,7 @@ class BuildDataTest(unittest.TestCase):
                 ch = json.load(f)
             empties += [(ch["edition"], ch["book"], ch["chapter"], v["v"]) for v in ch["verses"] if v["text"] == ""]
         # The only empty rows are the two the 1611 text itself leaves empty (kept so verse numbers match Verse).
-        self.assertEqual(empties, [("kj16", "Ecclesiasticus", 1, 7), ("kj16", "Ecclesiasticus", 17, 5)])
+        self.assertEqual(sorted(empties), [("kj16", "Ecclesiasticus", 1, 7), ("kj16", "Ecclesiasticus", 17, 5)])
 
     def test_l_apocrypha(self):
         ap = self.index["apocrypha"]
