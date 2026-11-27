@@ -7,12 +7,14 @@
 **Scripture one word at a time.**
 A Bible speed reading app: each word with a red focus letter, at the speed you choose, in your browser, even with no internet.
 
-<!-- Maintainers: after a new offline-* release, update VERSION and the Current offline release line plus this download sub-line to the new tag. -->
+<!-- Maintainers: after a new offline-* release, update VERSION, the Current offline release line, this download sub-line, and the All three .zip/.tar.gz links (word-offline-YYYYMMDD-all-editions, date only, no -N suffix) to the new tag/date. -->
 ### ⬇ Download for offline use
 
 ### [Geneva 1599](https://github.com/elcafe7/word/releases/latest/download/word-geneva1599.html) · [KJV](https://github.com/elcafe7/word/releases/latest/download/word-kjv.html) · [KJV 1611](https://github.com/elcafe7/word/releases/latest/download/word-kjv1611.html)
 
-<sub>offline-20261125-1 · one HTML file per Bible · about 4.3 MB each · free · <a href="https://github.com/elcafe7/word/releases/latest">release page</a></sub>
+### [All three (.zip)](https://github.com/elcafe7/word/releases/latest/download/word-offline-20261125-all-editions.zip) · [All three (.tar.gz)](https://github.com/elcafe7/word/releases/latest/download/word-offline-20261125-all-editions.tar.gz)
+
+<sub>offline-20261125-1 · one HTML file per Bible, or all three in one folder · about 4.3 MB each · free · <a href="https://github.com/elcafe7/word/releases/latest">release page</a></sub>
 
 [**Read online**](https://apocalypse.press/word/) · [Verse](https://apocalypse.press/verse/) · [Scroll](https://apocalypse.press/scroll/)
 
@@ -59,7 +61,7 @@ Each Bible is **one HTML file**. Download it once, then open it any time with no
 
 Each file has the 66 books of the Old and New Testaments. The Geneva (1599) and KJV 1611 files also include the Apocrypha (7 and 14 books, in the book picker between the Old and New Testaments, and in that same reading order); the KJV (Oxford 1769) file has none. All three files and their checksums are also on the [release page](https://github.com/elcafe7/word/releases/latest).
 
-**Want every edition at once?** Newer releases also have `word-offline-<YYYYMMDD>-all-editions.zip` and `.tar.gz` on the [release page](https://github.com/elcafe7/word/releases/latest): all three files, a short `README.txt` and the `LICENSE` in one download.
+**Want every edition at once?** Download [All three (.zip)](https://github.com/elcafe7/word/releases/latest/download/word-offline-20261125-all-editions.zip) or [All three (.tar.gz)](https://github.com/elcafe7/word/releases/latest/download/word-offline-20261125-all-editions.tar.gz). Unzip (or untar) and you get one folder called `word-offline-20261125-1` with all three HTML files, a short `README.txt` and the `LICENSE`.
 
 **On a phone?** The easiest way is to read online at [apocalypse.press/word](https://apocalypse.press/word/), and you can add it to your home screen from your browser's Share or menu button. To use the downloaded file on a phone, see **Android** and **iPhone / iPad** below.
 

@@ -16,6 +16,12 @@ describe('offline release version', () => {
     const readme = readFileSync(resolve(ROOT, 'README.md'), 'utf8');
     expect(readme).toContain(`**Current offline release: [${tag}](https://github.com/elcafe7/word/releases/tag/${tag})**`);
     expect(readme).toContain(`<sub>${tag} · one HTML file per Bible`);
+    const date = tag.replace(/^offline-/, '').replace(/-\d+$/, '');
+    expect(readme).toContain(`/download/word-offline-${date}-all-editions.zip`);
+    expect(readme).toContain(`/download/word-offline-${date}-all-editions.tar.gz`);
+    expect(readme).toContain(`All three (.zip)`);
+    expect(readme).toContain(`All three (.tar.gz)`);
+    expect(readme).toContain(`word-${tag}`);
   });
 
   it('footer line leads with Word and the tag', () => {
