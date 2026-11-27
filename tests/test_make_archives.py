@@ -13,15 +13,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "make_archives.py"
 DATE = "20261119"
+TAG = "offline-20261119-1"
 NAMES = ("word-geneva1599.html", "word-kjv.html", "word-kjv1611.html")
 FIXED_MTIME = 1795046400  # 2026-11-19 00:00:00 UTC
+FOLDER = f"word-{TAG}"
+STEM = f"word-offline-{DATE}-all-editions"
 
 
-def run(mode, html, out, *extra, date=DATE):
+def run(mode, html, out, *extra, date=DATE, tag=TAG):
     # Arguments are fixed by the tests; executable arrays avoid shell parsing.
     return subprocess.run(  # nosec B603
         [sys.executable, str(SCRIPT), mode, "--html-dir", str(html), "--out-dir", str(out),
-         "--date", date, "--license", str(ROOT / "LICENSE"), *extra],
+         "--date", date, "--tag", tag, "--license", str(ROOT / "LICENSE"), *extra],
         capture_output=True, text=True, check=False,
     )
 
@@ -40,12 +43,13 @@ class ArchiveTests(unittest.TestCase):
             (self.html / n).write_bytes(f"<html>{n} {i}</html>\n".encode() * 50)
         (self.html / "SHA256SUMS").write_text("ignored\n")  # non-edition file must not be packed
         self.out = Path(self.tmp.name) / "out"
-        self.root = f"word-offline-{DATE}-all-editions"
+        self.root = FOLDER
+        self.stem = STEM
 
     def build(self, out=None):
         proc = run("build", self.html, out or self.out)
         self.assertEqual(proc.returncode, 0, proc.stderr)
-        return (out or self.out) / f"{self.root}.zip", (out or self.out) / f"{self.root}.tar.gz"
+        return (out or self.out) / f"{self.stem}.zip", (out or self.out) / f"{self.stem}.tar.gz"
 
     def test_contents(self):
         z, t = self.build()
@@ -59,6 +63,9 @@ class ArchiveTests(unittest.TestCase):
                 self.assertIn(n, readme)
                 self.assertEqual(zf.read(f"{self.root}/{n}"), (self.html / n).read_bytes())
             self.assertIn("double-click", readme)
+            self.assertIn(FOLDER, readme)
+            self.assertTrue(z.name == f"{STEM}.zip")
+            self.assertTrue(t.name == f"{STEM}.tar.gz")
         with tarfile.open(t, "r:gz") as tf:
             self.assertEqual(tf.getnames(), want)
             for m in tf.getmembers():
@@ -89,6 +96,7 @@ class ArchiveTests(unittest.TestCase):
 
     def test_bad_inputs(self):
         self.assertNotEqual(run("build", self.html, self.out, date="2026-11-19").returncode, 0)
+        self.assertNotEqual(run("build", self.html, self.out, tag="v1.0.0").returncode, 0)
         empty = Path(self.tmp.name) / "empty"
         empty.mkdir()
         proc = run("build", empty, self.out)

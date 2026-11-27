@@ -208,7 +208,7 @@ settings.
 
 ## All-editions archives
 
-Each release also ships `word-offline-<YYYYMMDD>-all-editions.zip` and `.tar.gz`:
+Each release also ships `word-offline-<YYYYMMDD>-all-editions.zip` and `.tar.gz` (they unpack to a folder named `word-<tag>`, for example `word-offline-20261125-1`):
 every edition HTML file plus a short `README.txt` and the `LICENSE`, inside one
 folder. `scripts/make_archives.py` builds them deterministically (files sorted,
 every timestamp fixed to the release date, no gzip name or time), so the same

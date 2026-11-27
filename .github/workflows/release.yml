@@ -142,9 +142,10 @@ jobs:
       - name: Build and verify the all-editions archives
         env:
           DATE: ${{ steps.meta.outputs.date }}
+          TAG: ${{ steps.meta.outputs.tag }}
         run: |
-          python3 scripts/make_archives.py build --html-dir dist --out-dir dist --date "$DATE" --license LICENSE
-          python3 scripts/make_archives.py verify --html-dir dist --out-dir dist --date "$DATE" --license LICENSE
+          python3 scripts/make_archives.py build --html-dir dist --out-dir dist --date "$DATE" --tag "$TAG" --license LICENSE
+          python3 scripts/make_archives.py verify --html-dir dist --out-dir dist --date "$DATE" --tag "$TAG" --license LICENSE
           ls -l dist
 
       - name: Stage SBOM input (lockfile + release files)
@@ -364,8 +365,9 @@ jobs:
       - name: Check the all-editions archives match the HTML files
         env:
           DATE: ${{ needs.build-scan.outputs.date }}
+          TAG: ${{ needs.build-scan.outputs.tag }}
         run: |
-          python3 scripts/make_archives.py verify --contents-only --html-dir dist --out-dir dist --date "$DATE" --license LICENSE
+          python3 scripts/make_archives.py verify --contents-only --html-dir dist --out-dir dist --date "$DATE" --tag "$TAG" --license LICENSE
           test "$(find dist -maxdepth 1 \( -name 'word-offline-*-all-editions.zip' -o -name 'word-offline-*-all-editions.tar.gz' \) | wc -l)" -eq 2
           grep -q -- "-all-editions.zip$" dist/SHA256SUMS
           grep -q -- "-all-editions.tar.gz$" dist/SHA256SUMS
