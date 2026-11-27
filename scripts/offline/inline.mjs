@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { booksForEdition } from '../../src/app/books.js';
+import { footerEditionLine, readOfflineTag } from './version.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
@@ -186,10 +187,27 @@ async function main() {
   // Wordmark: no relative link inside a single file
   html = once(html, '<a class="wordmark" href="./"', '<a class="wordmark" href="#"', 'wordmark');
 
-  // Footer: edition + build date line (no "offline HTML build" link inside the offline file)
+  // Version is the release tag (WORD_OFFLINE_TAG, else VERSION). Show it in the header, welcome card, and footer.
+  const tag = readOfflineTag();
+
+  html = once(html,
+    '<a class="wordmark" href="#" aria-label="Word home">',
+    `<div class="brand">\n      <a class="wordmark" href="#" aria-label="Word home">`,
+    'brand open');
+  html = once(html,
+    '</a>\n      <div class="header-actions">',
+    `</a>\n      <span class="app-version" data-testid="app-version">${esc(tag)}</span>\n      </div>\n      <div class="header-actions">`,
+    'brand version');
+
+  html = once(html,
+    '<h2 class="welcome-title" id="welcome-title">Welcome to Word</h2>',
+    `<h2 class="welcome-title" id="welcome-title">Welcome to Word</h2>\n        <p class="welcome-version" data-testid="welcome-version">Version ${esc(tag)}</p>`,
+    'welcome version');
+
+  // Footer: prominent release tag + edition (no "offline HTML build" link inside the offline file)
   html = html.replace(/\s*<p class="offline-note"><a [^>]*data-testid="footer-offline"[\s\S]*?<\/p>/, '');
   html = once(html, '<p class="offline-note">a project of',
-    `<p class="offline-note" data-testid="footer-offline-edition">Offline edition · ${esc(edition.name)} · built ${isoDate} · no internet needed</p>\n      <p class="offline-note">a project of`, 'footer');
+    `<p class="offline-note" data-testid="footer-offline-edition">${esc(footerEditionLine(tag, edition.name))}</p>\n      <p class="offline-note">a project of`, 'footer');
   // Offline only: Donate link at the end of the credit line (the online footer has none)
   html = once(html, 'data-testid="footer-ap">AP</a></p>',
     `data-testid="footer-ap">AP</a> · <a href="${DONATE_URL}" target="_blank" rel="noopener noreferrer" data-testid="footer-donate">Donate</a></p>`, 'credit line');

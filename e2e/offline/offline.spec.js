@@ -64,7 +64,9 @@ for (const e of EDITIONS) {
       await tid(page, 'btn-play').click();
       await expect(tid(page, 'btn-play')).toHaveAttribute('data-state', 'paused');
       // A11: footer, title, build meta
-      await expect(tid(page, 'footer-offline-edition')).toHaveText(new RegExp(`^Offline edition · ${escapeRegExp(e.name)} · built \\d{4}-\\d{2}-\\d{2} · no internet needed$`));
+      await expect(tid(page, 'app-version')).toHaveText(/^offline-\d{8}(-\d+)?$/);
+      await expect(tid(page, 'welcome-version')).toHaveText(/^Version offline-\d{8}(-\d+)?$/);
+      await expect(tid(page, 'footer-offline-edition')).toHaveText(new RegExp(`^Word offline-\\d{8}(-\\d+)? · ${escapeRegExp(e.name)} · no internet needed$`));
       await expect(tid(page, 'footer-offline')).toHaveCount(0);
       await expect(footerCredit(page)).toHaveText('a project of JPSF & AP · Donate');
       await expect(tid(page, 'footer-donate')).toHaveAttribute('href', 'https://jesuspeoplesf.com/donate/');
