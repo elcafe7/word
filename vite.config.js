@@ -37,7 +37,8 @@ const MB = (b) => (b / 1e6).toFixed(1);
 /**
  * Online footer line linking the offline release (offline SPEC §2.7). OFF by default: it renders only when
  * WORD_OFFLINE_FOOTER=1 AND offline-release.json (or WORD_OFFLINE_RELEASE) exists with a valid tag, so the line
- * can never point at a release that doesn't exist. Never /releases/latest (CLI tags share the repo).
+ * can never show before a release exists. The link opens the main repo page, whose README is the download guide
+ * (Nate 2026-11-09: "dl link for verse and word should go to main repo not changelog").
  */
 export function offlineFooterLine(release) {
   if (!release || !/^offline-\d{8}(-\d+)?$/.test(release.tag ?? '')) return null;
@@ -49,7 +50,7 @@ export function offlineFooterLine(release) {
   const tail = spread > 0.2 + 1e-9
     ? sizes.map(([n, b]) => `${n} ${MB(b)} MB`).join(', ')
     : `Geneva 1599, KJV, KJV 1611 · one file each, about ${MB(sizes.reduce((a, [, b]) => a + b, 0) / 3)} MB`;
-  return `<p class="offline-note"><a href="${OFFLINE_REPO}/releases/tag/${release.tag}" target="_blank" rel="noopener" data-testid="footer-offline">offline HTML build</a> · ${tail}</p>`;
+  return `<p class="offline-note"><a href="${OFFLINE_REPO}" target="_blank" rel="noopener" data-testid="footer-offline">offline HTML build</a> · ${tail}</p>`;
 }
 
 const offlineFooter = () => ({

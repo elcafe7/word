@@ -43,7 +43,7 @@ describe('offlineFooterLine', () => {
   const files = { gen: 4343403, kjv: 4299753, kj16: 4363404 };
   it('one "about" size when the files are close', () => {
     expect(offlineFooterLine({ tag: 'offline-20261029', files })).toBe(
-      '<p class="offline-note"><a href="https://github.com/elcafe7/word/releases/tag/offline-20261029" target="_blank" rel="noopener" data-testid="footer-offline">offline HTML build</a> · Geneva 1599, KJV, KJV 1611 · one file each, about 4.3 MB</p>',
+      '<p class="offline-note"><a href="https://github.com/elcafe7/word" target="_blank" rel="noopener" data-testid="footer-offline">offline HTML build</a> · Geneva 1599, KJV, KJV 1611 · one file each, about 4.3 MB</p>',
     );
   });
   it('lists each size when they differ by more than 0.2 MB', () => {
