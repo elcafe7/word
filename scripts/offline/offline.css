@@ -49,3 +49,46 @@
   font-size: 0.85rem;
 }
 .offline-edition-note[hidden] { display: none; }
+
+/* Prominent release tag in the offline file (header pill, welcome card, footer). */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.app-version {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 0.2em 0.6em;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--glass-surface);
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.welcome-version {
+  margin: 0 0 0.35rem;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+footer > [data-testid="footer-offline-edition"] {
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+@media (max-width: 720px) {
+  .app-version {
+    font-size: 0.64rem;
+    padding: 0.15em 0.45em;
+  }
+}

@@ -2,14 +2,17 @@
 
 # Word
 
+**Current offline release: [offline-20261125-1](https://github.com/elcafe7/word/releases/tag/offline-20261125-1)** · 25 November 2026
+
 **Scripture one word at a time.**
 A Bible speed reading app: each word with a red focus letter, at the speed you choose, in your browser, even with no internet.
 
+<!-- Maintainers: after a new offline-* release, update VERSION and the Current offline release line plus this download sub-line to the new tag. -->
 ### ⬇ Download for offline use
 
 ### [Geneva 1599](https://github.com/elcafe7/word/releases/latest/download/word-geneva1599.html) · [KJV](https://github.com/elcafe7/word/releases/latest/download/word-kjv.html) · [KJV 1611](https://github.com/elcafe7/word/releases/latest/download/word-kjv1611.html)
 
-<sub>one HTML file per Bible · about 4.3 MB each · free · <a href="https://github.com/elcafe7/word/releases/latest">release page</a></sub>
+<sub>offline-20261125-1 · one HTML file per Bible · about 4.3 MB each · free · <a href="https://github.com/elcafe7/word/releases/latest">release page</a></sub>
 
 [**Read online**](https://apocalypse.press/word/) · [Verse](https://apocalypse.press/verse/) · [Scroll](https://apocalypse.press/scroll/)
 
