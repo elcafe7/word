@@ -51,10 +51,13 @@ npx playwright install && npm run e2e      # browser tests, if you changed the U
 
 ## Continuous integration
 
-Every pull request runs **CodeQL** (GitHub code scanning), and it must pass
-before merging. The unit tests run locally (above) and again in the release
-workflow ([`.github/workflows/release.yml`](.github/workflows/release.yml)),
-which won't publish a release unless they pass.
+Every pull request runs these GitHub Actions checks, and they must pass before merging:
+
+- **Tests**: [`.github/workflows/tests.yml`](.github/workflows/tests.yml) (`npm run data`, `npm test`, and `python3 -m unittest scripts/test_build_data.py`)
+- **CodeQL** (GitHub code scanning)
+
+The release workflow ([`.github/workflows/release.yml`](.github/workflows/release.yml))
+runs the same unit tests again and won't publish a release unless they pass.
 
 ## Requirements for contributions
 
